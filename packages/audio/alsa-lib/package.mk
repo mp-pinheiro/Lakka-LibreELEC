@@ -1,28 +1,55 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="alsa-lib"
-PKG_VERSION="1.2.3.2"
-PKG_SHA256="e81fc5b7afcaee8c9fd7f64a1e3043e88d62e9ad2c4cff55f578df6b0a9abe15"
+PKG_VERSION="1.1.0"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.alsa-project.org/"
-PKG_URL="ftp://ftp.alsa-project.org/pub/lib/alsa-lib-$PKG_VERSION.tar.bz2"
+PKG_URL="ftp://ftp.alsa-project.org/pub/lib/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_LONGDESC="ALSA (Advanced Linux Sound Architecture) is the next generation Linux Sound API."
-PKG_TOOLCHAIN="autotools"
-PKG_BUILD_FLAGS="+pic"
+PKG_PRIORITY="optional"
+PKG_SECTION="audio"
+PKG_SHORTDESC="alsa-lib: Advanced Linux Sound Architecture library"
+PKG_LONGDESC="ALSA (Advanced Linux Sound Architecture) is the next generation Linux Sound API. It provides much finer (->better) access to the sound hardware, has a unbeatable mixer API and supports stuff like multi channel hardware, digital outs and ins, uninterleaved sound data access, and an oss emulation layer (for the old applications). It is the prefered API for professional sound apps under Linux."
 
-if build_with_debug; then
-  PKG_ALSA_DEBUG=--with-debug
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="yes"
+
+if [ "$DEBUG" = yes ]; then
+  ALSA_DEBUG=--with-debug
 else
-  PKG_ALSA_DEBUG=--without-debug
+  ALSA_DEBUG=--without-debug
 fi
 
-PKG_CONFIGURE_OPTS_TARGET="$PKG_ALSA_DEBUG \
-                           --disable-dependency-tracking \
-                           --with-plugindir=/usr/lib/alsa \
-                           --disable-python"
+# package specific configure options
+PKG_CONFIGURE_OPTS_TARGET="--with-plugindir=/usr/lib/alsa \
+                           --disable-python \
+                           $ALSA_DEBUG \
+                           --disable-dependency-tracking"
+
+pre_configure_target() {
+  CFLAGS="$CFLAGS -fPIC -DPIC"
+
+  # alsa-lib fails building with LTO support
+    strip_lto
+}
 
 post_configure_target() {
   sed -i 's/.*PKGLIBDIR.*/#define PKGLIBDIR ""/' include/config.h
@@ -37,8 +64,4 @@ post_makeinstall_target() {
 
 post_install() {
   add_group audio 63
-
-  if [ "$DEVICE" = "RPi4-RetroDreamer" ]; then
-    sed -i -e "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $INSTALL/usr/lib/modprobe.d/alsa-base.conf
-  fi
 }

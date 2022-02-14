@@ -19,11 +19,12 @@
 ################################################################################
 
 PKG_NAME="cap32"
-PKG_VERSION="b8f09a0"
+PKG_VERSION="74e8279"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/libretro-cap32"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/libretro/libretro-cap32.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

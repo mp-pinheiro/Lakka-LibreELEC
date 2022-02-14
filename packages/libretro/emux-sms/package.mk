@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="emux-sms"
-PKG_VERSION="640d4ba"
+PKG_VERSION="867a76f"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/emux"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,7 +33,6 @@ PKG_LONGDESC="Emux is a cross-platform emulator project supporting various machi
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-PKG_TOOLCHAIN="manual"
 
 make_target() {
   make -C libretro -f Makefile.lakka MACHINE=sms

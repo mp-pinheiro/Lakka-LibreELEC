@@ -1,33 +1,54 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="fribidi"
-PKG_VERSION="1.0.5"
-PKG_SHA256="6a64f2a687f5c4f203a46fa659f43dd43d1f8b845df8d723107e8a7e6158e4ce"
+PKG_VERSION="0.19.5"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="LGPL"
-PKG_SITE="http://fribidi.freedesktop.org/"
-PKG_URL="https://github.com/fribidi/fribidi/releases/download/v$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_SITE="http://fribidi.org/"
+PKG_URL="http://fribidi.org/download/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_LONGDESC="A bidirectional algorithm library."
-PKG_TOOLCHAIN="configure"
-PKG_BUILD_FLAGS="+pic"
+PKG_PRIORITY="optional"
+PKG_SECTION="devel"
+PKG_SHORTDESC="fribidi: The Bidirectional Algorithm library"
+PKG_LONGDESC="The library implements all of the algorithm as described in the Unicode Standard Annex #9, The Bidirectional Algorithm, http://www.unicode.org/unicode/reports/tr9/. FriBidi is exhautively tested against Bidi Reference Code, and due to our best knowledge, does not contain any conformance bugs."
+
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="yes"
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-shared \
                            --enable-static \
                            --disable-debug \
                            --disable-deprecated \
                            --disable-silent-rules \
-                           --with-gnu-ld"
+                           --enable-malloc \
+                           --enable-charsets \
+                           --with-gnu-ld \
+                           --without-glib"
 
-pre_configure_target() {
-  export CFLAGS="$CFLAGS -DFRIBIDI_CHUNK_SIZE=4080"
-}
+export CFLAGS="$CFLAGS -DFRIBIDI_CHUNK_SIZE=4080"
+export CFLAGS="$CFLAGS -fPIC -DPIC"
 
 post_makeinstall_target() {
-  mkdir -p $SYSROOT_PREFIX/usr/bin
-    cp -f $PKG_DIR/scripts/fribidi-config $SYSROOT_PREFIX/usr/bin
-    chmod +x $SYSROOT_PREFIX/usr/bin/fribidi-config
+  mkdir -p $ROOT/$TOOLCHAIN/bin
+    cp -f $PKG_DIR/scripts/fribidi-config $ROOT/$TOOLCHAIN/bin
+    chmod +x $ROOT/$TOOLCHAIN/bin/fribidi-config
 
   rm -rf $INSTALL/usr/bin
 }

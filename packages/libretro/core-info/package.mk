@@ -19,11 +19,12 @@
 ################################################################################
 
 PKG_NAME="core-info"
-PKG_VERSION="0ff7a04"
+PKG_VERSION="d700af8"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/libretro-core-info"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/libretro/libretro-super"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -39,6 +40,6 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp $PKG_BUILD/*.info $INSTALL/usr/lib/libretro/
+  cp dist/info/*.info $INSTALL/usr/lib/libretro/
 }
 

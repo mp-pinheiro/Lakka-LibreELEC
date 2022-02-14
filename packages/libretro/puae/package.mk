@@ -19,31 +19,29 @@
 ################################################################################
 
 PKG_NAME="puae"
-PKG_VERSION="5dad957"
+PKG_VERSION="7cbc230"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/libretro-uae"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
-PKG_SHORTDESC="Portable Commodore Amiga Emulator"
-PKG_LONGDESC="Portable Commodore Amiga Emulator"
+PKG_SHORTDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
+PKG_LONGDESC="WIP libretro port of UAE (P-UAE and libco) Expect bugs"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_make_target() {
-  if [ "$ARCH" = "arm" ]; then
-    CFLAGS+=" -DARM -marm"
-  elif [ "$ARCH" = "aarch64" ]; then
-    CFLAGS+=" -DARM"
+pre_configure_target() {
+  strip_lto
+  if [ "$ARCH" == "arm" ]; then
+    CFLAGS="$CFLAGS -DARM"
   fi
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
   cp puae_libretro.so $INSTALL/usr/lib/libretro/
-  mkdir -p $INSTALL/usr/share/retroarch-system/uae_data
-  cp -R $PKG_BUILD/sources/uae_data/* $INSTALL/usr/share/retroarch-system/uae_data/
 }

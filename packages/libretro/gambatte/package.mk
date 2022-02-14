@@ -19,11 +19,12 @@
 ################################################################################
 
 PKG_NAME="gambatte"
-PKG_VERSION="0eeb15d"
+PKG_VERSION="9596337"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/gambatte-libretro"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -34,10 +35,10 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 make_target() {
-  make -f Makefile.libretro
+  make -C libgambatte -f Makefile.libretro
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp gambatte_libretro.so $INSTALL/usr/lib/libretro/
+  cp libgambatte/gambatte_libretro.so $INSTALL/usr/lib/libretro/
 }

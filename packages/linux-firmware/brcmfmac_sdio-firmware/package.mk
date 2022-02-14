@@ -1,48 +1,34 @@
-# SPDX-License-Identifier: GPL-2.0
-# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="brcmfmac_sdio-firmware"
-PKG_VERSION="3ddc301c272f081aa5513c1934f6d530bf80de4a"
-PKG_SHA256="a9c76315c6c64d2dea250f53b942ee2bd7d1a289db9f19e0604183e87180f5e8"
+PKG_VERSION="0.1"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/LibreELEC/brcmfmac_sdio-firmware"
-PKG_URL="https://github.com/LibreELEC/brcmfmac_sdio-firmware/archive/$PKG_VERSION.tar.gz"
-PKG_LONGDESC="Broadcom SDIO firmware used with LibreELEC"
-PKG_TOOLCHAIN="manual"
+PKG_SITE="https://github.com/OpenELEC/OpenELEC.tv"
+PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_PRIORITY="optional"
+PKG_SECTION="firmware"
+PKG_SHORTDESC="brcmfmac_sdio-firmware: firmware for brcm bluetooth devices"
+PKG_LONGDESC="Firmware for Broadcom Bluetooth devices and brcm-patchram-plus that downloads a patchram files in the HCD format to the Bluetooth based silicon and combo chips and other utility functions."
 
-post_makeinstall_target() {
-  FW_TARGET_DIR=$INSTALL/$(get_full_firmware_dir)
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
-  if find_file_path firmwares/$PKG_NAME.dat; then
-    FW_LISTS="${FOUND_PATH}"
-  else
-    FW_LISTS="${PKG_DIR}/firmwares/any.dat ${PKG_DIR}/firmwares/${TARGET_ARCH}.dat"
-  fi
-
-  for fwlist in ${FW_LISTS}; do
-    [ -f ${fwlist} ] || continue
-    while read -r fwline; do
-      [ -z "${fwline}" ] && continue
-      [[ ${fwline} =~ ^#.* ]] && continue
-      [[ ${fwline} =~ ^[[:space:]] ]] && continue
-
-      for fwfile in $(cd ${PKG_BUILD} && eval "find ${fwline}"); do
-        [ -d ${PKG_BUILD}/${fwfile} ] && continue
-        if [ -f ${PKG_BUILD}/${fwfile} ]; then
-          mkdir -p $(dirname ${FW_TARGET_DIR}/brcm/${fwfile})
-            cp -Lv ${PKG_BUILD}/${fwfile} ${FW_TARGET_DIR}/brcm/${fwfile}
-        else
-          echo "ERROR: Firmware file ${fwfile} does not exist - aborting"
-          exit 1
-        fi
-      done
-    done < ${fwlist}
-  done
-
-  mkdir -p $INSTALL/usr/bin
-    cp $PKG_DIR/scripts/brcmfmac-firmware-setup $INSTALL/usr/bin
-}
-
-post_install() {
-  enable_service brcmfmac-firmware.service
-}

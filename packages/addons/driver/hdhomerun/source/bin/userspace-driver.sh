@@ -1,7 +1,22 @@
 #!/bin/sh
 
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 . /etc/profile
 
@@ -36,15 +51,7 @@ if [ ! -f "$HDHR_ADDON_SETTINGS" ]; then
 fi
 
 mkdir -p /var/config
-
-# check settings version
-XML_SETTINGS_VER="$(xmlstarlet sel -t -m settings -v @version $HDHR_ADDON_SETTINGS)"
-if [ "$XML_SETTINGS_VER" = "2" ]; then
-  xmlstarlet sel -t -m settings/setting -v @id -o "=\"" -v . -o "\"" -n "$HDHR_ADDON_SETTINGS" > /var/config/hdhomerun-addon.conf
-else
-  xmlstarlet sel -t -m settings -m setting -v @id -o "=\"" -v @value -o "\"" -n "$HDHR_ADDON_SETTINGS" > /var/config/hdhomerun-addon.conf
-fi
-
+cat "$HDHR_ADDON_SETTINGS" | awk -F\" '{print $2"=\""$4"\""}' | sed '/^=/d' > /var/config/hdhomerun-addon.conf
 . /var/config/hdhomerun-addon.conf
 
 if [ -z "$(pidof userhdhomerun)" ]; then

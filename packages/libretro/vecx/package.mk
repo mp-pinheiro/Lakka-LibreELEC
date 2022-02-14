@@ -19,11 +19,12 @@
 ################################################################################
 
 PKG_NAME="vecx"
-PKG_VERSION="28d6efc"
+PKG_VERSION="0c75655"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2|LGPLv2.1"
 PKG_SITE="https://github.com/libretro/libretro-vecx"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -33,26 +34,8 @@ PKG_LONGDESC="libretro adaptation of vecx"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$OPENGL_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGL"
-fi
-
-if [ "$OPENGLES_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGLES"
-fi
-
 make_target() {
-  if [ "$PROJECT" == "RPi" ]; then
-    if [ "${DEVICE:0:4}" == "RPi4" -o "$DEVICE" == "RPi3" ]; then
-	make platform=rpi-mesa -f Makefile.libretro # Use mesa gl/gles
-    else
-	make platform=rpi -f Makefile.libretro # broadcom gl/gles
-    fi
-  elif [ "$OPENGLES_SUPPORT" = "yes" ]; then
-    make HAS_GLES=1 GLES=1 -f Makefile.libretro
-  else
-    make -f Makefile.libretro
- fi
+  make -f Makefile.libretro
 }
 
 makeinstall_target() {

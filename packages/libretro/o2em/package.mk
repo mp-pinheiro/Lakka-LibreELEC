@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="o2em"
-PKG_VERSION="f105024"
+PKG_VERSION="c54042e"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Artistic License"
-PKG_SITE="https://github.com/libretro/libretro-o2em"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/libretro/libretro-o2em.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

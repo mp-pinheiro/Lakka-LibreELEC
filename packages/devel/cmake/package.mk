@@ -1,24 +1,88 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="cmake"
-PKG_VERSION="3.14.5"
-PKG_SHA256="505ae49ebe3c63c595fa5f814975d8b72848447ee13b6613b0f8b96ebda18c06"
+PKG_VERSION="3.0.2"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://www.cmake.org/"
-PKG_URL="http://www.cmake.org/files/v${PKG_VERSION%.*}/$PKG_NAME-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_HOST="ccache:host openssl:host"
-PKG_LONGDESC="A cross-platform, open-source make system."
-PKG_TOOLCHAIN="configure"
+PKG_URL="http://www.cmake.org/files/v3.0/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_DEPENDS_HOST="ccache:host"
+PKG_PRIORITY="optional"
+PKG_SECTION="toolchain/devel"
+PKG_SHORTDESC="cmake: A cross-platform, open-source make system"
+PKG_LONGDESC="CMake is used to control the software compilation process using simple platform and compiler independent configuration files. CMake generates native makefiles and workspaces that can be used in the compiler environment of your choice. CMake is quite sophisticated: it is possible to support complex environments requiring system configuration, preprocessor generation, code generation, and template instantiation."
+
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
 configure_host() {
-  ../configure --prefix=$TOOLCHAIN \
+  ../configure --prefix=$ROOT/$TOOLCHAIN \
                --no-qt-gui --no-system-libs \
                -- \
-               -DCMAKE_C_FLAGS="-O2 -Wall -pipe -Wno-format-security" \
-               -DCMAKE_CXX_FLAGS="-O2 -Wall -pipe -Wno-format-security" \
-               -DCMAKE_EXE_LINKER_FLAGS="$HOST_LDFLAGS" \
-               -DCMAKE_USE_OPENSSL=ON \
                -DBUILD_CursesDialog=0
+}
+
+post_makeinstall_host() {
+  mkdir -p $ROOT/$TOOLCHAIN/etc
+
+  cat >$ROOT/$TOOLCHAIN/etc/cmake-$TARGET_NAME.conf <<EOF
+# this one is important
+SET(CMAKE_SYSTEM_NAME Linux)
+#this one not so much
+SET(CMAKE_SYSTEM_VERSION 1)
+
+# specify the cross compiler
+SET(CMAKE_C_COMPILER   $TARGET_CC)
+SET(CMAKE_CXX_COMPILER $TARGET_CXX)
+
+# where is the target environment 
+SET(CMAKE_FIND_ROOT_PATH  $SYSROOT_PREFIX)
+
+# search for programs in the build host directories
+SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+
+# for libraries and headers in the target directories
+SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+EOF
+
+  cat >$ROOT/$TOOLCHAIN/etc/cmake-$HOST_NAME.conf <<EOF
+# this one is important
+SET(CMAKE_SYSTEM_NAME Linux)
+#this one not so much
+SET(CMAKE_SYSTEM_VERSION 1)
+
+# specify the host compiler
+SET(CMAKE_C_COMPILER   $HOST_CC)
+SET(CMAKE_CXX_COMPILER $HOST_CXX)
+
+# where is the target environment 
+SET(CMAKE_FIND_ROOT_PATH  $ROOT/$TOOLCHAIN)
+
+# search for programs in the build host directories
+SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM BOTH)
+
+# for libraries and headers in the target directories
+SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
+
+EOF
 }

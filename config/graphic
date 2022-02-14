@@ -1,153 +1,100 @@
-[ -z "${OPENGL}" ] && OPENGL="no"
-[ -z "${OPENGLES}" ] && OPENGLES="no"
-[ -z "${VULKAN}" ] && VULKAN="no"
+if [ "$DISPLAYSERVER" = "x11" ]; then
+  SDL_SUPPORT="yes"
+else
+  SDL_SUPPORT="no"
+fi
 
-if [ "${OPENGL}" = no ]; then
+if [ "$OPENGL" = no ]; then
   OPENGL_SUPPORT="no"
 else
   OPENGL_SUPPORT="yes"
 fi
 
-if [ "${OPENGLES}" = no ]; then
+if [ "$OPENGLES" = no ]; then
   OPENGLES_SUPPORT="no"
 else
   OPENGLES_SUPPORT="yes"
 fi
 
-if [ "${VULKAN}" = no ]; then
-  VULKAN_SUPPORT="no"
-else
-  VULKAN_SUPPORT="yes"
+if [ "$SDL_SUPPORT" = no ]; then
+  JOYSTICK_SUPPORT="no"
+fi
+
+if [ "$OPENGL_SUPPORT" = no ]; then
+  KODI_SCR_RSXS="no"
+  KODI_VIS_PROJECTM="no"
+  KODI_VIS_GOOM="no"
 fi
 
 get_graphicdrivers() {
-
-  # set defaults
-  GALLIUM_DRIVERS=""
-  DRI_DRIVERS=""
-  XORG_DRIVERS=""
-  LLVM_SUPPORT="no"
-  COMPOSITE_SUPPORT="no"
-  VDPAU_SUPPORT="no"
-  VAAPI_SUPPORT="no"
-  V4L2_SUPPORT="no"
-
-  if [ "${GRAPHIC_DRIVERS}" = "all" ]; then
-    GRAPHIC_DRIVERS="iris i915 crocus r200 r300 r600 radeonsi nvidia nvidia-legacy vmware virtio vc4"
+  if [ "$GRAPHIC_DRIVERS" = "all" ]; then
+    GRAPHIC_DRIVERS="i915 i965 r200 r300 r600 nvidia"
   fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "etnaviv"; then
-    GALLIUM_DRIVERS+=" etnaviv kmsro"
-    V4L2_SUPPORT="yes"
-    VAAPI_SUPPORT="no"
-    VDPAU_SUPPORT="no"
-  fi
+  for drv in $GRAPHIC_DRIVERS; do
+    if [ "$drv" = "i915" ]; then
+      DRI_DRIVERS="$DRI_DRIVERS,i915"
+      XORG_DRIVERS="$XORG_DRIVERS intel"
+      COMPOSITE_SUPPORT="yes"
+      VAAPI_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "freedreno"; then
-    GALLIUM_DRIVERS+=" freedreno"
-    V4L2_SUPPORT="yes"
-    VAAPI_SUPPORT="no"
-    VDPAU_SUPPORT="no"
-  fi
+    if [ "$drv" = "i965" ]; then
+      DRI_DRIVERS="$DRI_DRIVERS,i965"
+      XORG_DRIVERS="$XORG_DRIVERS intel"
+      COMPOSITE_SUPPORT="yes"
+      VAAPI_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "i915"; then
-    GALLIUM_DRIVERS+=" i915"
-    XORG_DRIVERS+=" intel"
-    COMPOSITE_SUPPORT="yes"
-    VAAPI_SUPPORT="yes"
-  fi
+    if [ "$drv" = "nouveau" ]; then
+      # DRI_DRIVERS are only used for NV04 - NV20 (which we dont want to support anymore)
+      DRI_DRIVERS="$DRI_DRIVERS"
+      # GALLIUM_DRIVERS are used for all cards from NV30 to nvc0
+      # see also http://nouveau.freedesktop.org/wiki/MesaDrivers/
+      GALLIUM_DRIVERS="$GALLIUM_DRIVERS,nouveau"
+      XORG_DRIVERS="$XORG_DRIVERS nouveau"
+      COMPOSITE_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "iris"; then
-    GALLIUM_DRIVERS+=" iris"
-    XORG_DRIVERS+=" intel"
-    COMPOSITE_SUPPORT="yes"
-    VAAPI_SUPPORT="yes"
-  fi
+    if [ "$drv" = "nvidia" ]; then
+      XORG_DRIVERS="$XORG_DRIVERS nvidia"
+      VDPAU_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "crocus"; then
-    GALLIUM_DRIVERS+=" crocus"
-    XORG_DRIVERS+=" intel"
-    COMPOSITE_SUPPORT="yes"
-    VAAPI_SUPPORT="yes"
-  fi
+    if [ "$drv" = "nvidia-legacy" ]; then
+      XORG_DRIVERS="$XORG_DRIVERS nvidia-legacy"
+      VDPAU_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "lima"; then
-    GALLIUM_DRIVERS+=" kmsro lima"
-    V4L2_SUPPORT="yes"
-  fi
+    if [ "$drv" = "r200" ]; then
+      DRI_DRIVERS="$DRI_DRIVERS,r200"
+      XORG_DRIVERS="$XORG_DRIVERS ati"
+      COMPOSITE_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "nvidia"; then
-    XORG_DRIVERS+=" nvidia"
-    VDPAU_SUPPORT="yes"
-  fi
+    if [ "$drv" = "r300" ]; then
+      GALLIUM_DRIVERS="$GALLIUM_DRIVERS,r300"
+      XORG_DRIVERS="$XORG_DRIVERS ati"
+      LLVM_SUPPORT="yes"
+      COMPOSITE_SUPPORT="yes"
+      VDPAU_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "nvidia-legacy"; then
-    XORG_DRIVERS+=" nvidia-legacy"
-    VDPAU_SUPPORT="yes"
-  fi
+    if [ "$drv" = "r600" ]; then
+      GALLIUM_DRIVERS="$GALLIUM_DRIVERS,r600"
+      XORG_DRIVERS="$XORG_DRIVERS ati"
+      LLVM_SUPPORT="yes"
+      COMPOSITE_SUPPORT="yes"
+      VDPAU_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "panfrost"; then
-    GALLIUM_DRIVERS+=" kmsro panfrost"
-    V4L2_SUPPORT="yes"
-  fi
+    if [ "$drv" = "radeonsi" ]; then
+      GALLIUM_DRIVERS="$GALLIUM_DRIVERS,radeonsi"
+      XORG_DRIVERS="$XORG_DRIVERS ati"
+      LLVM_SUPPORT="yes"
+      COMPOSITE_SUPPORT="yes"
+      VDPAU_SUPPORT="yes"
+    fi
 
-  if listcontains "${GRAPHIC_DRIVERS}" "r200"; then
-    DRI_DRIVERS+=" r200"
-    XORG_DRIVERS+=" ati"
-    COMPOSITE_SUPPORT="yes"
-  fi
-
-  if listcontains "${GRAPHIC_DRIVERS}" "r300"; then
-    GALLIUM_DRIVERS+=" r300"
-    XORG_DRIVERS+=" ati"
-    LLVM_SUPPORT="yes"
-    COMPOSITE_SUPPORT="yes"
-    VDPAU_SUPPORT="yes"
-  fi
-
-  if listcontains "${GRAPHIC_DRIVERS}" "r600"; then
-    GALLIUM_DRIVERS+=" r600"
-    XORG_DRIVERS+=" ati"
-    LLVM_SUPPORT="yes"
-    COMPOSITE_SUPPORT="yes"
-    VDPAU_SUPPORT="yes"
-    VAAPI_SUPPORT="yes"
-  fi
-
-  if listcontains "${GRAPHIC_DRIVERS}" "radeonsi"; then
-    GALLIUM_DRIVERS+=" radeonsi"
-    XORG_DRIVERS+=" ati amdgpu"
-    LLVM_SUPPORT="yes"
-    COMPOSITE_SUPPORT="yes"
-    VDPAU_SUPPORT="yes"
-    VAAPI_SUPPORT="yes"
-  fi
-
-  if listcontains "${GRAPHIC_DRIVERS}" "vc4"; then
-    GALLIUM_DRIVERS+=" vc4 v3d kmsro"
-    V4L2_SUPPORT="yes"
-    VAAPI_SUPPORT="no"
-    VDPAU_SUPPORT="no"
-  fi
-
-  if listcontains "${GRAPHIC_DRIVERS}" "virtio"; then
-    GALLIUM_DRIVERS+=" virgl"
-  fi
-
-  if listcontains "${GRAPHIC_DRIVERS}" "vmware"; then
-    GALLIUM_DRIVERS+=" svga"
-    XORG_DRIVERS+=" vmware"
-    COMPOSITE_SUPPORT="yes"
-  fi
-
-  if listcontains "${GRAPHIC_DRIVERS}" "nouveau"; then
-    GALLIUM_DRIVERS+=" nouveau"
-    XORG_DRIVERS+=" nouveau"
-    COMPOSITE_SUPPORT="yes"
-  fi
-
-  # remove duplicate entries
-  GALLIUM_DRIVERS="$(echo ${GALLIUM_DRIVERS} | xargs -n1 | sort -u | xargs)"
-  XORG_DRIVERS="$(echo ${XORG_DRIVERS} | xargs -n1 | sort -u | xargs)"
-  DRI_DRIVERS="$(echo ${DRI_DRIVERS} | xargs -n1 | sort -u | xargs)"
+  done
 }

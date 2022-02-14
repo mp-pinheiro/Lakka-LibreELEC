@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="prosystem"
-PKG_VERSION="89e6df7"
+PKG_VERSION="24bf5eb"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/prosystem-libretro"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/libretro/prosystem-libretro.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

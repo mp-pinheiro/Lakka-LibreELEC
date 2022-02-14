@@ -1,51 +1,62 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="libcec"
-PKG_VERSION="libcec-4.0.4"
-PKG_SHA256="4382a964bf8c511c22c03cdab5ba2d81c241536e6479072a61516966804f400a"
+PKG_VERSION="2.2.0"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://libcec.pulse-eight.com/"
-PKG_URL="https://github.com/Pulse-Eight/libcec/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain systemd p8-platform swig:host"
+PKG_URL="http://mirrors.xbmc.org/build-deps/sources/$PKG_NAME-$PKG_VERSION-3.tar.gz"
+PKG_DEPENDS_TARGET="toolchain systemd lockdev"
+PKG_PRIORITY="optional"
+PKG_SECTION="system"
+PKG_SHORTDESC="libCEC is an open-source dual licensed library designed for communicating with the Pulse-Eight USB - CEC Adaptor"
 PKG_LONGDESC="libCEC is an open-source dual licensed library designed for communicating with the Pulse-Eight USB - CEC Adaptor."
 
-PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=1 \
-                       -DCMAKE_INSTALL_LIBDIR:STRING=lib \
-                       -DCMAKE_INSTALL_LIBDIR_NOARCH:STRING=lib \
-                       -DSKIP_PYTHON_WRAPPER=1 \
-                       -DHAVE_IMX_API=0 \
-                       -DHAVE_AOCEC_API=0 -DHAVE_AMLOGIC_API=0 \
-                       -DHAVE_GIT_BIN=0"
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="yes"
 
-if [ "$PROJECT" = "RPi" ]; then
+PKG_CONFIGURE_OPTS_TARGET="--disable-cubox --disable-exynos"
+
+if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bcm2835-driver"
+
+  export CFLAGS="$CFLAGS \
+                 -I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads/ \
+                 -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux"
+  export CXXFLAGS="$CXXFLAGS \
+                   -I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads/ \
+                   -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux"
+
+  PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET --enable-rpi \
+                             --with-rpi-include-path=$SYSROOT_PREFIX/usr/include \
+                             --with-rpi-lib-path=$SYSROOT_PREFIX/usr/lib"
+else
+  PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET --disable-rpi"
 fi
 
-# libX11 and xrandr to read the sink's EDID, used to determine the PC's HDMI physical address
-if [ "$DISPLAYSERVER" = "x11" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libX11 libXrandr"
+if [ "$KODIPLAYER_DRIVER" = "libfslvpuwrap" ]; then
+  PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET --enable-imx6"
+else
+  PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET --disable-imx6"
 fi
 
-if [ "$CEC_FRAMEWORK_SUPPORT" = "yes" ]; then
-  PKG_PATCH_DIRS="cec-framework"
-  PKG_CMAKE_OPTS_TARGET="$PKG_CMAKE_OPTS_TARGET -DHAVE_LINUX_API=1"
-fi
 
-pre_configure_target() {
-  if [ "$PROJECT" = "RPi" ]; then
-    # detecting RPi support fails without -lvchiq_arm
-    export LDFLAGS="$LDFLAGS -lvchiq_arm"
-  fi
-}
-
-post_makeinstall_target() {
-  # Remove the Python3 demo - useless for us
-  rm -f $INSTALL/usr/bin/pyCecClient
-
-  PYTHON_DIR=$INSTALL/usr/lib/$PKG_PYTHON_VERSION
-  if [ -d $PYTHON_DIR/dist-packages ]; then
-    mv $PYTHON_DIR/dist-packages $PYTHON_DIR/site-packages
-  fi
-}
+# dont use some optimizations because of build problems
+  export LDFLAGS=`echo $LDFLAGS | sed -e "s|-Wl,--as-needed||"`

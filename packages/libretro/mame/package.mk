@@ -19,36 +19,37 @@
 ################################################################################
 
 PKG_NAME="mame"
-PKG_VERSION="ec47e94"
+PKG_VERSION="e986bb3"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
-PKG_SITE="https://github.com/libretro/mame"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/libretro/mame-libretro.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="MAME - Multiple Arcade Machine Emulator"
 PKG_LONGDESC="MAME - Multiple Arcade Machine Emulator"
-PKG_BUILD_FLAGS="-gold -lto"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 make_target() {
+  strip_gold
+  strip_lto
+
   LCPU=$ARCH
   PTR64=0
-  NOASM=0
 
-  if [ "$ARCH" == "arm" ]; then
-    NOASM=1
-  elif [ "$ARCH" == "i386" ]; then
+  if [ "$ARCH" == "i386" ]; then
     LCPU=x86
-  elif [ "$ARCH" == "x86_64" ]; then
+  fi
+
+  if [ "$ARCH" == "x86_64" ]; then
     PTR64=1
   fi
 
-  make REGENIE=1 VERBOSE=1 NOWERROR=1 PYTHON_EXECUTABLE=python2 CONFIG=libretro LIBRETRO_OS="unix" ARCH="" PROJECT="" LIBRETRO_CPU="$LCPU" DISTRO="debian-stable" CC="$CC" CXX="$CXX" LD="$LD" CROSS_BUILD="" PTR64="$PTR64" TARGET="mame" SUBTARGET="arcade" PLATFORM=$LCPU RETRO=1 OSD="retro"
+  make REGENIE=1 VERBOSE=1 NOWERROR=1 PYTHON_EXECUTABLE=python2 CONFIG=libretro LIBRETRO_OS="unix" ARCH="" LIBRETRO_CPU="$LCPU" DISTRO="debian-stable" OVERRIDE_CC="$CC" OVERRIDE_CXX="$CXX" OVERRIDE_LD="$LD" CROSS_BUILD="" PTR64="$PTR64" TARGET="mame" SUBTARGET="arcade"
 }
 
 makeinstall_target() {

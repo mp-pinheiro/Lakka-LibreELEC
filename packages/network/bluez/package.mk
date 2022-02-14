@@ -1,24 +1,48 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="bluez"
-PKG_VERSION="5.50"
-PKG_SHA256="c44b776660bf78e664e388b979da152976296e444dece833f3ddbd5be5a3b1b4"
+PKG_VERSION="5.37"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.bluez.org/"
-PKG_URL="https://git.kernel.org/pub/scm/bluetooth/bluez.git/snapshot/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_URL="http://www.kernel.org/pub/linux/bluetooth/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain dbus glib readline systemd"
+PKG_PRIORITY="optional"
+PKG_SECTION="network"
+PKG_SHORTDESC="bluez: Bluetooth Tools and System Daemons for Linux."
 PKG_LONGDESC="Bluetooth Tools and System Daemons for Linux."
-PKG_TOOLCHAIN="autotools"
-PKG_BUILD_FLAGS="+lto"
 
-if build_with_debug; then
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="yes"
+
+if [ "$DEBUG" = "yes" ]; then
   BLUEZ_CONFIG="--enable-debug"
 else
   BLUEZ_CONFIG="--disable-debug"
 fi
 
-BLUEZ_CONFIG="$BLUEZ_CONFIG --enable-monitor --enable-test"
+if [ "$DEVTOOLS" = "yes" ]; then
+  BLUEZ_CONFIG="$BLUEZ_CONFIG --enable-monitor --enable-test"
+else
+  BLUEZ_CONFIG="$BLUEZ_CONFIG --disable-monitor --disable-test"
+fi
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-dependency-tracking \
                            --disable-silent-rules \
@@ -28,26 +52,18 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-dependency-tracking \
                            --disable-obex \
                            --enable-client \
                            --enable-systemd \
-                           --enable-tools --enable-deprecated \
+                           --enable-tools \
                            --enable-datafiles \
                            --disable-experimental \
                            --enable-sixaxis \
                            --with-gnu-ld \
-                           $BLUEZ_CONFIG"
-
-# bluez had the good idea to use ':' in storage filenames, fat32 doesn't like that
-if [ "$DEVICE" = "Switch" ]; then
-        PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET storagedir=/var/bluetoothconfig"
-else
-        PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET storagedir=/storage/.cache/bluetooth"
-fi
+                           $BLUEZ_CONFIG \
+                           storagedir=/storage/.cache/bluetooth"
 
 pre_configure_target() {
 # bluez fails to build in subdirs
-  cd $PKG_BUILD
+  cd $ROOT/$PKG_BUILD
     rm -rf .$TARGET_NAME
-
-  export LIBS="-lncurses"
 }
 
 post_makeinstall_target() {
@@ -56,30 +72,9 @@ post_makeinstall_target() {
   rm -rf $INSTALL/usr/bin/bluemoon
   rm -rf $INSTALL/usr/bin/ciptool
   rm -rf $INSTALL/usr/share/dbus-1
-
-  mkdir -p $INSTALL/etc/bluetooth
-    cp src/main.conf $INSTALL/etc/bluetooth
-    sed -i $INSTALL/etc/bluetooth/main.conf \
-        -e "s|^#\[Policy\]|\[Policy\]|g" \
-        -e "s|^#AutoEnable.*|AutoEnable=true|g" \
-        -e "s|^#JustWorksRepairing.*|JustWorksRepairing=always|g" \
-        -e "s|^#FastConnectable.*|FastConnectable=true|g" \
-        -e "s|^# Privacy =.*|Privacy = device|g"
-
-#  This fixes joycon connection issues after they have already been paired.
-#  if [ "$DEVICE" == "Switch" ]; then
-#    sed -i 's/#FastConnectable = false/FastConnectable = true/' $INSTALL/etc/bluetooth/main.conf
-#  fi
-
-  mkdir -p $INSTALL/usr/share/services
-    cp -P $PKG_DIR/default.d/*.conf $INSTALL/usr/share/services
-
-  # bluez looks in /etc/firmware/
-    ln -sf /usr/lib/firmware $INSTALL/etc/firmware
 }
 
 post_install() {
-  enable_service bluetooth-defaults.service
   enable_service bluetooth.service
   enable_service obex.service
 }

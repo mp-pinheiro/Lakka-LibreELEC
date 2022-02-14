@@ -30,40 +30,54 @@
         # fpa fpe2 fpe3 maverick vfp vfpv3 vfpv3-fp16 vfpv3-d16 vfpv3-d16-fp16
         # vfpv3xd vfpv3xd-fp16 neon neon-fp16 vfpv4 vfpv4-d16 fpv4-sp-d16
         # neon-vfpv4.
-        TARGET_FPU="neon-vfpv4"
+        TARGET_FPU="neon"
         ;;
     esac
-
-    UBOOT_CONFIG="odroid-xu4_defconfig"
 
   # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
     BOOTLOADER="u-boot"
 
-  # We use our own u-boot package and mkimage script
-    UBOOT_VERSION="vendor"
+  # u-boot version to use (default)
+    UBOOT_VERSION="odroidxu3"
 
-  # Target Configfile for u-boot (not used in this project)
+  # Configuration for u-boot
+    UBOOT_CONFIG="odroid_config"
+
+  # Target Configfile for u-boot
     UBOOT_CONFIGFILE="boot.ini"
 
   # Kernel target for u-boot (default 'uImage' if BOOTLOADER=u-boot) (uImage / zImage)
-    KERNEL_TARGET="zImage"
+    KERNEL_UBOOT_TARGET="zImage"
+
+  # Kernel extra targets to build
+    KERNEL_UBOOT_EXTRA_TARGET="dtbs"
 
   # Additional kernel make parameters (for example to specify the u-boot loadaddress)
-    KERNEL_MAKE_EXTRACMD="dtbs"
+    KERNEL_MAKE_EXTRACMD=""
 
   # Kernel to use. values can be:
-    LINUX="odroidxu4-4.14"
+  # default:  default mainline kernel
+    LINUX="linux-odroidxu3"
 
 
 ################################################################################
 # setup build defaults
 ################################################################################
 
+  # Build optimizations (size/normal)
+    OPTIMIZATIONS="size"
+
   # Project CFLAGS
     PROJECT_CFLAGS=""
 
+  # LTO (Link Time Optimization) support
+    LTO_SUPPORT="yes"
+
+  # GOLD (Google Linker) support
+    GOLD_SUPPORT="yes"
+
   # SquashFS compression method (gzip / lzo / xz)
-    SQUASHFS_COMPRESSION="zstd"
+    SQUASHFS_COMPRESSION="gzip"
 
 
 ################################################################################
@@ -77,13 +91,16 @@
     OPENGL="no"
 
   # OpenGL-ES implementation to use (no / bcm2835-driver / gpu-viv-bin-mx6q)
-    OPENGLES="libmali"
+    OPENGLES="odroidxu3-mali"
 
-  # Displayserver to use (x11 / weston / no)
-    DISPLAYSERVER=""
+  # include uvesafb support (yes / no)
+    UVESAFB_SUPPORT="no"
+
+  # Displayserver to use (x11 / no)
+    DISPLAYSERVER="no"
 
   # Windowmanager to use (ratpoison / fluxbox / none)
-    WINDOWMANAGER=""
+    WINDOWMANAGER="none"
 
   # Xorg Graphic drivers to use (all / i915,i965,r200,r300,r600,nvidia,nouveau)
   # Space separated list is supported,
@@ -93,18 +110,40 @@
   # KODI Player implementation to use (default / bcm2835-driver / libfslvpuwrap)
     KODIPLAYER_DRIVER="libfslvpuwrap"
 
-  # Used by the libmali package
-    MALI_FAMILY="t620"
-  
-  # build and install CEC framework support (yes / no)
-    CEC_FRAMEWORK_SUPPORT=""
+  # Modules to install in initramfs for early boot
+    INITRAMFS_MODULES=""
 
   # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
   # Space separated list is supported,
   # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
-    FIRMWARE="misc-firmware wlan-firmware"
+    FIRMWARE="misc-firmware wlan-firmware dvb-firmware"
 
-    ADDITIONAL_DRIVERS=""
+  # build and install ATV IR remote support (yes / no)
+    ATVCLIENT_SUPPORT="no"
 
-  # Default system partition offset, in sectors, eg. 2048
-    SYSTEM_PART_START=3072
+  # build and install IRServer IR/LCD support (yes / no)
+    IRSERVER_SUPPORT="no"
+
+  # build with swap support (yes / no)
+    SWAP_SUPPORT="no"
+
+  # swap support enabled per default (yes / no)
+    SWAP_ENABLED_DEFAULT="no"
+
+  # swapfile size if SWAP_SUPPORT=yes in MB
+    SWAPFILESIZE="128"
+
+  # build with installer (yes / no)
+    INSTALLER_SUPPORT="no"
+
+  # build and install 'RSXS' Screensaver (yes / no)
+    KODI_SCR_RSXS="no"
+
+  # build and install 'ProjectM' Visualization (yes / no)
+    KODI_VIS_PROJECTM="no"
+
+  # build and install 'GOOM' Visualization (yes / no)
+    KODI_VIS_GOOM="no"
+
+  # build and install 'FishBMC' Visualization (yes / no)
+    KODI_VIS_FISHBMC="no"

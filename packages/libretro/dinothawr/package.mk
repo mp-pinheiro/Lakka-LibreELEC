@@ -19,25 +19,23 @@
 ################################################################################
 
 PKG_NAME="dinothawr"
-PKG_VERSION="d9ed9c8"
+PKG_VERSION="5b42ce8"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/Dinothawr"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Dinothawr is a block pushing puzzle game on slippery surfaces"
 PKG_LONGDESC="Dinothawr is a block pushing puzzle game on slippery surfaces. Our hero is a dinosaur whose friends are trapped in ice. Through puzzles it is your task to free the dinos from their ice prison."
-PKG_BUILD_FLAGS="-gold"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_make_target() {
-  if target_has_feature neon; then
-    export HAVE_NEON=1
-  fi
+pre_configure_target() {
+  strip_gold
 }
 
 makeinstall_target() {

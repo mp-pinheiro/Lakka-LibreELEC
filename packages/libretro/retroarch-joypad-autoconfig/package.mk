@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="retroarch-joypad-autoconfig"
-PKG_VERSION="6285b70"
+PKG_VERSION="acad162"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/retroarch-joypad-autoconfig"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/lakkatv/retroarch-joypad-autoconfig"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -34,23 +34,11 @@ PKG_LONGDESC="RetroArch joypad autoconfig files"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$DEVICE" = "RPi4-RetroDreamer" ]; then
-  PKG_PATCH_DIRS+=" retrodreamer-patch"
-fi
-
-configure_target() {
-  cd $PKG_BUILD
+make_target() {
+  :
 }
 
 makeinstall_target() {
-  make install INSTALLDIR="$INSTALL/etc/retroarch-joypad-autoconfig" DOC_DIR="$INSTALL/etc/doc/."
-  
-  #Remove non tested joycon configs
-  rm "${INSTALL}"/etc/retroarch-joypad-autoconfig/udev/Nintendo\ -\ Switch\ Pro\ Controller\ \(bare\).cfg
-  rm "${INSTALL}"/etc/retroarch-joypad-autoconfig/udev/Nintendo\ -\ Switch\ Pro\ Controller.cfg
-  rm "${INSTALL}"/etc/retroarch-joypad-autoconfig/udev/Nintendo-Switch-Online_NES-Controller_Left.cfg
-  rm "${INSTALL}"/etc/retroarch-joypad-autoconfig/udev/Nintendo-Switch-Online_NES-Controller_Right.cfg
-
-  #Place Working configs
-  cp -Pr "${PKG_DIR}"/joypad_configs/* "${INSTALL}"/etc/retroarch-joypad-autoconfig/  
+  mkdir -p $INSTALL/etc/retroarch-joypad-autoconfig
+  cp -r * $INSTALL/etc/retroarch-joypad-autoconfig
 }

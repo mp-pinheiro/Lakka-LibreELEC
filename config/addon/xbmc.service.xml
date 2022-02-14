@@ -4,12 +4,12 @@
        version="@ADDON_VERSION@"
        provider-name="@PROVIDER_NAME@">
   <requires>
-    <import addon="os.libreelec.tv" version="@OS_VERSION@"/>
+    <import addon="os.openelec.tv" version="@OS_VERSION@"/>
     <import addon="xbmc.python" version="2.1.0"/>
 @REQUIRES@
   </requires>
   <extension point="xbmc.service" library="default.py">
-    <provides>@PKG_ADDON_PROVIDES@</provides>
+    <provides>executable</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary>@PKG_SHORTDESC@</summary>
@@ -20,13 +20,5 @@
 @PKG_DISCLAIMER@
     </disclaimer>
     <platform>all</platform>
-    <news>
-@PKG_ADDON_NEWS@
-    </news>
-    <assets>
-      <icon>resources/icon.png</icon>
-      <fanart>resources/fanart.png</fanart>
-@PKG_ADDON_SCREENSHOT@
-    </assets>
   </extension>
 </addon>

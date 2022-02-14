@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="bsnes-mercury"
-PKG_VERSION="d232c6e"
+PKG_VERSION="ccd4994"
 PKG_REV="1"
-PKG_ARCH="x86_64 i386"
+PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/bsnes-mercury"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -35,10 +35,10 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 make_target() {
-  make compiler=$CXX ui='target-libretro' profile='balanced'
+  make compiler=$CXX ui='target-libretro' profile='balanced' 
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp bsnes_mercury_performance_libretro.so $INSTALL/usr/lib/libretro/bsnes_mercury_balanced_libretro.so
+  cp out/bsnes_mercury_balanced_libretro.so $INSTALL/usr/lib/libretro/bsnes_mercury_balanced_libretro.so
 }

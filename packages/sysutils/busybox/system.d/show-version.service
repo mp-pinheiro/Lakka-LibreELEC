@@ -7,7 +7,7 @@ ConditionKernelCommandLine=!morequiet
 Type=oneshot
 ExecStart=/usr/bin/lsb_release
 RemainAfterExit=yes
-StandardOutput=tty
+#StandardOutput=tty
 
 [Install]
 WantedBy=basic.target

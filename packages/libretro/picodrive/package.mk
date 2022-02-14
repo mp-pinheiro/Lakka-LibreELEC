@@ -19,11 +19,12 @@
 ################################################################################
 
 PKG_NAME="picodrive"
-PKG_VERSION="50b8b47"
+PKG_VERSION="e9d7e81"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/libretro/picodrive"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain $PKG_NAME:host"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -32,6 +33,10 @@ PKG_LONGDESC="This is yet another Megadrive / Genesis / Sega CD / Mega CD / 32X 
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
+
+pre_configure_target() {
+  strip_gold
+}
 
 configure_host() {
   :
@@ -52,11 +57,8 @@ configure_target() {
 }
 
 make_target() {
-  CFLAGS+=" -I./"
   if [ "$ARCH" == "arm" ]; then
-    make -C .. -f Makefile.libretro platform=armv
-  elif [ "$ARCH" == "aarch64" ]; then
-    make -C .. -f Makefile.libretro platform=aarch64
+    make -C .. -f Makefile.libretro platform=armv6
   else
     make -C .. -f Makefile.libretro
   fi
