@@ -1,179 +1,159 @@
 #!/bin/bash
 
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
-. config/options ""
+. config/options $1
 
-get_deps() {
-  need=()
-  need_pkg=()
+deps=
+deps_pkg=
+files=
+files_pkg=
 
-  for i in "${!deps[@]}"; do
-    dep=${deps[${i}]}
-    dep_pkg=${deps_pkg[${i}]}
-    if ! command -v "${dep}" >/dev/null; then
-      need+=(${dep})
-      need_pkg+=("${dep_pkg}")
+case $1 in
+  get)
+    deps="wget"
+    deps_pkg="wget"
+    ;;
+  build)
+    deps="bash bc gcc g++ sed patch touch tar bzip2 gzip perl cp gawk makeinfo gperf cvs zip unzip mkfontscale mkfontdir bdftopcf diff xsltproc java"
+    deps_pkg="bash bc gcc g++ sed patch fileutils tar bzip2 gzip perl coreutils gawk texinfo gperf cvs zip unzip xfonts-utils xfonts-utils xfonts-utils diff xsltproc default-jre"
+    files="/usr/include/stdio.h /usr/include/ncurses.h"
+    files_pkg="libc6-dev libncurses5-dev"
+    if [ -f /etc/redhat-release ]; then
+      deps_pkg="bash bc gcc gcc-c++ sed patch fileutils tar bzip2 gzip perl coreutils gawk texinfo gperf cvs zip unzip xorg-x11-font-utils xorg-x11-font-utils diffutils libxslt java-1.7.0-openjdk"
+      files_pkg="glibc-headers ncurses-devel"
     fi
-  done
-
-  for i in "${!files[@]}"; do
-    file=${files[${i}]}
-    file_pkg=${files_pkg[${i}]}
-    if [ ! -f "${file}" ]; then
-      need+=(${file})
-      need_pkg+=("${file_pkg}")
+    ;;
+  qemu)
+    if [ ! `which qemu` ]; then
+      echo "Your system doesn't seem to have QEMU installed"
+      exit 1
     fi
-  done
-
-  for i in "${!perl_mod[@]}"; do
-    mod=${perl_mod[${i}]}
-    pkg=${perl_pkg[${i}]}
-
-    if ! perl -M"${mod}" -e exit 2>/dev/null; then
-      need+=(perl::${mod})
-      need_pkg+=(${pkg})
-    fi
-  done
-}
-
-get_yes_no()
-{
-  local ans
-  read -p "Would you like to install the needed tools? (y/n) " ans
-  [ "${ans,,}" = "y" ] && return 0
-  [ "${ans,,}" = "yes" ] && return 0
-  return 1
-}
-
-if  [ -f /etc/lsb-release ]; then
-  DISTRO=$(grep DISTRIB_ID /etc/lsb-release | cut -d "=" -f 2)
-fi
-
-if  [ -f /etc/os-release ]; then
-  DISTRO=$(grep ^ID= /etc/os-release | cut -d "=" -f 2)
-fi
-
-DISTRO=${DISTRO,,}
-
-deps=(wget bash bc gcc sed patch lsdiff tar bzip2 gzip perl gawk gperf zip unzip diff lzop)
-deps_pkg=(wget bash bc gcc sed patch patchutils tar bzip2 gzip perl gawk gperf zip unzip diffutils lzop)
-
-files=(/usr/include/stdio.h /usr/include/ncurses.h)
-files_pkg=(libc6-dev libncurses5-dev)
-
-perl_mod=(JSON XML::Parser)
-
-case "${DISTRO}" in
-    fedora|centos|rhel)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(gcc-c++ xorg-x11-font-utils xorg-x11-font-utils xorg-x11-font-utils libxslt java-1.7.0-openjdk python2)
-      if [[ ! $(rpm -qa glibc-static) ]]; then
-        deps+=(glibc-static)
-        deps_pkg+=(glibc-static)
-      fi
-      if [[ ! $(rpm -qa libstdc++-static) ]]; then
-        deps+=(libstdc++-static)
-        deps_pkg+=(libstdc++-static)
-      fi
-      files_pkg=(glibc-headers ncurses-devel)
-      perl_pkg=(perl-JSON perl-XML-parser)
-      ;;
-    gentoo|sabayon)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=("gcc[cxx]" mkfontscale mkfontdir bdftopcf libxslt virtual/jre python)
-      files_pkg=(glibc ncurses)
-      perl_pkg=(JSON XML-Parser)
-      ;;
-    arch)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(g++ xorg-mkfontscale xorg-mkfontdir xorg-bdftopcf libxslt "java-runtime-common jdk8-openjdk" python2)
-      perl_pkg=(perl-json perl-xml-parser)
-      ;;
-    opensuse)
-      deps+=( g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(gcc-c++ mkfontscale mkfontdir bdftopcf libxslt-tools java-1_8_0-openjdk python)
-      if [[ ! $(rpm -qa glibc-devel-static) ]]; then
-        deps+=(glibc-devel-static)
-        deps_pkg+=(glibc-devel-static)
-      fi
-      perl_pkg=(perl-JSON perl-XML-Parser)
-      ;;
-    *)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(g++ xfonts-utils xfonts-utils xfonts-utils xsltproc default-jre python)
-      perl_pkg=(libjson-perl libxml-parser-perl)
-      ;;
+    ;;
 esac
 
 # project specific dependencies
-if [ -n "${EXTRA_DEPS}" ] ; then
-  deps+=(${EXTRA_DEPS})
+if [ -n "$EXTRA_DEPS" ] ; then
+  deps="$deps $EXTRA_DEPS"
 fi
-if [ -n "${EXTRA_DEPS_PKG}" ] ; then
-  deps_pkg+=(${EXTRA_DEPS_PKG})
-fi
-
-# distro specific dependencies
-if [ -n "${DISTRO_DEPS}" ] ; then
-  deps+=(${DISTRO_DEPS})
-fi
-if [ -n "${DISTRO_DEPS_PKG}" ] ; then
-  deps_pkg+=(${DISTRO_DEPS_PKG})
+if [ -n "$EXTRA_DEPS_PKG" ] ; then
+  deps_pkg="$deps_pkg $EXTRA_DEPS_PKG"
 fi
 
-get_deps
+getarg() {
+  eval echo \${$(($1+2))}
+}
 
-if [ "${#need[@]}" -gt 0 ]; then
-  echo "**** Your system lacks the following tools needed to build ${DISTRONAME} ****"
-  for i in "${!need[@]}"; do
-    echo "${need[${i}]} provided by ${need_pkg[${i}]}"
-  done
-  echo "**** You seem to use a ${DISTRO} system ****"
+i=0
+while dep=`getarg $i $deps` && [ -n "$dep" ]; do
+  [ -z "`which $dep 2>/dev/null`" ] && need="$need $dep" && need_pkg="$need_pkg `getarg $i $deps_pkg`"
+  i=$(($i+1))
+done
 
-  if command -v sudo >/dev/null; then
-    case "${DISTRO}" in
-      ubuntu|debian|linuxmint|\"elementary\")
-        get_yes_no && sudo apt-get install "${need_pkg[@]}"
-        ;;
-      fedora|centos|rhel)
-        command -v dnf >/dev/null && YUM=dnf || YUM=yum
-        get_yes_no && sudo ${YUM} install "${need_pkg[@]}"
-        ;;
-      gentoo)
-        get_yes_no && sudo emerge --ask --deep "${need_pkg[@]}"
-        ;;
-      sabayon)
-        get_yes_no && sudo equo install --ask "${need_pkg[@]}"
-        ;;
-      mageia)
-        get_yes_no && sudo urpmi "${need_pkg[@]}"
-        ;;
-      arch)
-        get_yes_no && sudo pacman -Sy "${need_pkg[@]}"
-        ;;
-      opensuse)
-        get_yes_no && sudo zypper install -y --no-recommends "${need_pkg[@]}"
-        ;;
-      *)
-        echo "**** unsupported distro ${DISTRO} ****"
+i=0
+while file=`getarg $i $files` && [ -n "$file" ]; do
+  [ ! -f $file ] && need="$need $file" && need_pkg="$need_pkg `getarg $i $files_pkg`"
+  i=$(($i+1))
+done
+
+if [ -n "$need" ]; then
+  echo "**** Your system lacks the following tools needed to $1 $DISTRONAME ****"
+  echo $need
+
+  if  [ -f /etc/lsb-release ]; then
+    DISTRO=$(grep DISTRIB_ID /etc/lsb-release | cut -d "=" -f 2)
+  fi
+
+  if [ "$DISTRO" = "Ubuntu" ]; then
+    echo "**** You seem to use a $DISTRO system ****"
+    read -p "would you like to install the needed tools ? (y/n) " ans
+    if ( ! [ -z "`which aptitude 2>/dev/null`" ] && [ "$ans" = "y" ]); then
+      sudo aptitude install $need_pkg
+    elif [ "$ans" = "y" ]; then
+      echo "**** The recommended Package-Manager Aptitude is not installed"
+      read -p "(y) install Aptitude :: (n) use APT " ans
+      if [ "$ans" = "y" ]; then
+        sudo apt-get -y install aptitude
+        sudo aptitude install $need_pkg
+      elif [ "$ans" = "n" ]; then
+        sudo apt-get install $need_pkg
+      else
+        echo "********"
         exit 1
-        ;;
-    esac
+      fi
+    else
+      echo "********"
+      exit 1
+    fi
+  elif ( ! [ -z "`which aptitude 2>/dev/null`" ]); then
+   DISTRO="a Debian" 
+   echo "**** You seem to use $DISTRO system ****"
+    read -p "would you like to install the needed tools ? (y/n) " ans
+    if ([ "$ans" = "y" ] && ! [ $(sudo -n uptime 2>&1|grep "load"|wc -l) ]); then
+      sudo aptitude install $need_pkg
+    elif [ "$ans" = "y" ]; then
+      su -c "aptitude install $need_pkg"
+    else
+      echo "********"
+      exit 1
+    fi
+  elif [ -f /etc/mandrake-release -a -n "`which urpmi 2>/dev/null`" ]; then
+    echo "**** You seem to use a mandrake system ****"
+    read -p "would you like to install the needed tools ? (y/n) " ans
+    [ "$ans" = "y" ] && sudo urpmi $need_pkg
+  elif [ -f /etc/gentoo-release -a -n "`which emerge 2>/dev/null`" ]; then
+    echo "**** You seem to use a gentoo system ****"
+    read -p "would you like to install the needed tools ? (y/n) " ans
+    [ "$ans" = "y" ] && sudo emerge -D $need_pkg
+  elif [ -f /etc/fedora-release -a -n "`which yum 2>/dev/null`" ]; then
+    echo "**** You seem to use a fedora system ****"
+    read -p "would you like to install the needed tools ? (y/n) " ans
+    [ "$ans" = "y" ] && sudo yum install $need_pkg
+  elif [ -f /etc/redhat-release -a "`which yum 2>/dev/null`" ]; then
+    echo "**** You seem to use a RedHat or clone (CentOS) system ****"
+    read -p "would you like to install the needed tools ? (y/n) " ans
+    [ "$ans" = "y" ] && sudo yum install $need_pkg
   else
-    echo "The command 'sudo' was not found. Please install necessary packages manually."
+    echo "********"
+    exit 1
   fi
 fi
 
-get_deps
 
-if [ "${#need[@]}" -gt 0 ]; then
+need=""
+need_pkg=""
+
+i=0
+while dep=`getarg $i $deps` && [ -n "$dep" ]; do
+  [ -z "`which $dep 2>/dev/null`" ] && need="$need $dep" && need_pkg="$need_pkg `getarg $i $deps_pkg`"
+  i=$(($i+1))
+done
+
+i=0
+while file=`getarg $i $files` && [ -n "$file" ]; do
+  [ ! -f $file ] && need="$need $file" && need_pkg="$need_pkg `getarg $i $files_pkg`"
+  i=$(($i+1))
+done
+
+if [ -n "$need" ]; then
   echo "**** The following packages were not installed correctly ****"
-  for i in "${!need[@]}"; do
-    echo "${need[${i}]} provided by ${need_pkg[${i}]}"
-  done
+  echo $need_pkg
   echo "********"
   exit 1
 fi

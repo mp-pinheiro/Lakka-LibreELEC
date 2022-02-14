@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="handy"
-PKG_VERSION="fc5c02e"
+PKG_VERSION="35a41f1"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Zlib"
 PKG_SITE="https://github.com/libretro/libretro-handy"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

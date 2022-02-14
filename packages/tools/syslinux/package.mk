@@ -1,27 +1,45 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="syslinux"
 PKG_VERSION="6.03"
-PKG_SHA256="26d3986d2bea109d5dc0e4f8c4822a459276cf021125e8c9f23c3cca5d8c850e"
+PKG_REV="1"
 PKG_ARCH="i386 x86_64"
 PKG_LICENSE="GPL"
 PKG_SITE="http://syslinux.zytor.com/"
 PKG_URL="http://www.kernel.org/pub/linux/utils/boot/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_HOST="util-linux:host"
 PKG_DEPENDS_TARGET="toolchain util-linux e2fsprogs syslinux:host"
-PKG_LONGDESC="The SYSLINUX project covers lightweight linux bootloaders."
+PKG_PRIORITY="optional"
+PKG_SECTION="tools"
+PKG_SHORTDESC="syslinux: Linux bootloader collection"
+PKG_LONGDESC="The SYSLINUX project covers lightweight linux bootloaders for floppy media (syslinux), network booting (pxelinux) and bootable el-torito cd-roms (isolinux)."
 
-pre_configure_target() {
-  PKG_MAKE_OPTS_TARGET="CC=$CC AR=$AR RANLIB=$RANLIB installer"
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
+
+PKG_MAKE_OPTS_TARGET="CC=$CC AR=$AR RANLIB=$RANLIB installer"
 
 # Unset all compiler FLAGS
   unset CFLAGS
   unset CPPFLAGS
   unset CXXFLAGS
   unset LDFLAGS
-}
 
 pre_build_target() {
   mkdir -p $PKG_BUILD/.$TARGET_NAME
@@ -45,28 +63,33 @@ make_host() {
   make CC=$CC \
        AR=$AR \
        RANLIB=$RANLIB \
-       CFLAGS="-I$TOOLCHAIN/include -I$PKG_BUILD/libinstaller -I$PKG_BUILD/libfat -I$PKG_BUILD/bios -I$PKG_BUILD/utils -fomit-frame-pointer -D_FILE_OFFSET_BITS=64" \
-       LDFLAGS="-L$TOOLCHAIN/lib" \
+       CFLAGS="-I$ROOT/$TOOLCHAIN/include -I$ROOT/$PKG_BUILD/libinstaller -I$ROOT/$PKG_BUILD/libfat -I$ROOT/$PKG_BUILD/bios -I$ROOT/$PKG_BUILD/utils -fomit-frame-pointer -D_FILE_OFFSET_BITS=64" \
+       LDFLAGS="-L$ROOT/$TOOLCHAIN/lib" \
        installer
 }
 
 makeinstall_host() {
-  mkdir -p $TOOLCHAIN/bin
-    cp bios/linux/syslinux $TOOLCHAIN/bin
-    cp bios/mtools/syslinux $TOOLCHAIN/bin/syslinux.mtools
+  mkdir -p $ROOT/$TOOLCHAIN/bin
+    cp bios/extlinux/extlinux $ROOT/$TOOLCHAIN/bin
+    cp bios/linux/syslinux $ROOT/$TOOLCHAIN/bin
 
-  mkdir -p $TOOLCHAIN/share/syslinux
-    cp bios/mbr/mbr.bin $TOOLCHAIN/share/syslinux
-    cp bios/mbr/gptmbr.bin $TOOLCHAIN/share/syslinux
-    cp efi64/efi/syslinux.efi $TOOLCHAIN/share/syslinux/bootx64.efi
-    cp efi64/com32/elflink/ldlinux/ldlinux.e64  $TOOLCHAIN/share/syslinux
+  mkdir -p $ROOT/$TOOLCHAIN/share/syslinux
+    cp bios/com32/menu/vesamenu.c32 $ROOT/$TOOLCHAIN/share/syslinux
+    cp bios/com32/lib/libcom32.c32 $ROOT/$TOOLCHAIN/share/syslinux
+    cp bios/com32/libutil/libutil.c32 $ROOT/$TOOLCHAIN/share/syslinux
+    cp bios/mbr/mbr.bin $ROOT/$TOOLCHAIN/share/syslinux
+    cp bios/mbr/gptmbr.bin $ROOT/$TOOLCHAIN/share/syslinux
+    cp efi64/efi/syslinux.efi $ROOT/$TOOLCHAIN/share/syslinux/bootx64.efi
+    cp efi64/com32/elflink/ldlinux/ldlinux.e64  $ROOT/$TOOLCHAIN/share/syslinux
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
+    cp bios/extlinux/extlinux $INSTALL/usr/bin
     cp bios/linux/syslinux $INSTALL/usr/bin
 
   $STRIP $INSTALL/usr/bin/syslinux
+  $STRIP $INSTALL/usr/bin/extlinux
 
   mkdir -p $INSTALL/usr/share/syslinux
     cp bios/mbr/mbr.bin $INSTALL/usr/share/syslinux

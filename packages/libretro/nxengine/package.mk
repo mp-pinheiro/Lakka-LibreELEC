@@ -19,11 +19,12 @@
 ################################################################################
 
 PKG_NAME="nxengine"
-PKG_VERSION="45bae99"
+PKG_VERSION="381af8c"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/libretro/nxengine-libretro"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="http://nxengine.sourceforge.net/"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

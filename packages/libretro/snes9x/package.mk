@@ -19,31 +19,23 @@
 ################################################################################
 
 PKG_NAME="snes9x"
-PKG_VERSION="c557884"
+PKG_VERSION="ccf1ee2"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/snes9x"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Snes9x - Portable Super Nintendo Entertainment System (TM) emulator"
 PKG_LONGDESC="Snes9x - Portable Super Nintendo Entertainment System (TM) emulator"
-PKG_TOOLCHAIN="make"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 make_target() {
-  if [ "$ARCH" == "arm" ]; then
-    CXXFLAGS="$CXXFLAGS -DARM"
-  fi
-  
-  if [ "$DEVICE" == "OdroidGoAdvance" ];then 
-	make -C libretro platform=classic_armv8_a35
-  else
-	make -C libretro
-  fi
+  make -C libretro
 }
 
 makeinstall_target() {

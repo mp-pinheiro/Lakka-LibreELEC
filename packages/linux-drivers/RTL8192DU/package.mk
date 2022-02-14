@@ -1,17 +1,37 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="RTL8192DU"
-PKG_VERSION="331ec03d89d0c0ebe771c4011846f029f6af33d3"
-PKG_SHA256="74e173b96d366ad50a0634fe98a8e55dc865276cd07de8fd635eaa4d5f71dae4"
+PKG_VERSION="7498302"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/lwfinger/rtl8192du"
-PKG_URL="https://github.com/lwfinger/rtl8192du/archive/$PKG_VERSION.tar.gz"
+PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
+PKG_PRIORITY="optional"
+PKG_SECTION="driver"
+PKG_SHORTDESC="Realtek RTL8192DU Linux 3.x driver"
 PKG_LONGDESC="Realtek RTL8192DU Linux 3.x driver"
-PKG_IS_KERNEL_PKG="yes"
+
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
 pre_make_target() {
   unset LDFLAGS
@@ -19,13 +39,13 @@ pre_make_target() {
 
 make_target() {
   make V=1 \
-       ARCH=$TARGET_KERNEL_ARCH \
+       ARCH=$TARGET_ARCH \
        KSRC=$(kernel_path) \
-       CROSS_COMPILE=$TARGET_KERNEL_PREFIX \
+       CROSS_COMPILE=$TARGET_PREFIX \
        CONFIG_POWER_SAVING=n
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/$(get_full_module_dir)/$PKG_NAME
-    cp *.ko $INSTALL/$(get_full_module_dir)/$PKG_NAME
+  mkdir -p $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME
+    cp *.ko $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME
 }

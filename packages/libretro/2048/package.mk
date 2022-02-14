@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="2048"
-PKG_VERSION="20051e1"
+PKG_VERSION="1ada1a1"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
-PKG_SITE="https://github.com/libretro/libretro-2048"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/libretro/2048"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"

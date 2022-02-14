@@ -1,18 +1,36 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="util-linux"
-PKG_VERSION="2.33.2"
-PKG_SHA256="631be8eac6cf6230ba478de211941d526808dba3cd436380793334496013ce97"
+PKG_VERSION="2.27.1"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_URL="http://www.kernel.org/pub/linux/utils/util-linux/v${PKG_VERSION%.*}/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_HOST="ccache:host autoconf:host automake:host pkg-config:host"
+PKG_URL="http://www.kernel.org/pub/linux/utils/util-linux/v2.27/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_DEPENDS_INIT="toolchain"
-PKG_LONGDESC="A large variety of low-level system utilities that are necessary for a Linux system to function."
-PKG_TOOLCHAIN="autotools"
-PKG_BUILD_FLAGS="+pic:host"
+PKG_PRIORITY="optional"
+PKG_SECTION="system"
+PKG_SHORTDESC="util-linux: Miscellaneous system utilities for Linux"
+PKG_LONGDESC="The util-linux package contains a large variety of low-level system utilities that are necessary for a Linux system to function. Among many features, Util-linux contains the fdisk configuration tool and the login program."
+
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="yes"
 
 UTILLINUX_CONFIG_DEFAULT="--disable-gtk-doc \
                           --disable-nls \
@@ -20,6 +38,7 @@ UTILLINUX_CONFIG_DEFAULT="--disable-gtk-doc \
                           --enable-tls \
                           --disable-all-programs \
                           --enable-chsh-only-listed \
+                          --enable-libmount-force-mountinfo \
                           --disable-bash-completion \
                           --disable-colors-default \
                           --disable-pylibmount \
@@ -32,9 +51,9 @@ UTILLINUX_CONFIG_DEFAULT="--disable-gtk-doc \
                           --without-audit \
                           --without-udev \
                           --without-ncurses \
-                          --without-ncursesw \
                           --without-readline \
                           --without-slang \
+                          --without-termcap \
                           --without-tinfo \
                           --without-utempter \
                           --without-util \
@@ -52,9 +71,7 @@ PKG_CONFIGURE_OPTS_TARGET="$UTILLINUX_CONFIG_DEFAULT \
                            --enable-libsmartcols \
                            --enable-losetup \
                            --enable-fsck \
-                           --enable-fstrim \
-                           --enable-blkid \
-                           --enable-lscpu"
+                           --enable-blkid"
 
 if [ "$SWAP_SUPPORT" = "yes" ]; then
   PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET --enable-swapon"
@@ -66,7 +83,13 @@ PKG_CONFIGURE_OPTS_HOST="--enable-static \
                          --enable-uuidgen \
                          --enable-libuuid"
 
-PKG_CONFIGURE_OPTS_INIT="$UTILLINUX_CONFIG_DEFAULT \
+PKG_CONFIGURE_OPTS_INIT="--prefix=/ \
+                         --bindir=/bin \
+                         --sbindir=/sbin \
+                         --sysconfdir=/etc \
+                         --libexecdir=/lib \
+                         --localstatedir=/var \
+                         $UTILLINUX_CONFIG_DEFAULT \
                          --enable-libblkid \
                          --enable-libmount \
                          --enable-fsck"
@@ -77,8 +100,8 @@ fi
 
 post_makeinstall_target() {
   if [ "$SWAP_SUPPORT" = "yes" ]; then
-    mkdir -p $INSTALL/usr/lib/libreelec
-      cp -PR $PKG_DIR/scripts/mount-swap $INSTALL/usr/lib/libreelec
+    mkdir -p $INSTALL/usr/lib/openelec
+      cp -PR $PKG_DIR/scripts/mount-swap $INSTALL/usr/lib/openelec
 
     mkdir -p $INSTALL/etc
       cat $PKG_DIR/config/swap.conf | \

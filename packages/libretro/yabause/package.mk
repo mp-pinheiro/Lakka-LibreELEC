@@ -19,38 +19,26 @@
 ################################################################################
 
 PKG_NAME="yabause"
-PKG_VERSION="d50f64e"
+PKG_VERSION="ccec0a1"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/yabause"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Port of Yabause to libretro."
 PKG_LONGDESC="Port of Yabause to libretro."
-PKG_TOOLCHAIN="make"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$OPENGL_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGL"
-fi
-
-if [ "$OPENGLES_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGLES"
-fi
-
 make_target() {
-  if [ "$ARCH" = "arm" -o "$ARCH" = "aarch64" ]; then
-    make -C yabause/src/libretro HAVE_SSE=0
-  else
-    make -C yabause/src/libretro
-  fi
+  make -C libretro
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp yabause/src/libretro/yabause_libretro.so $INSTALL/usr/lib/libretro/
+  cp libretro/yabause_libretro.so $INSTALL/usr/lib/libretro/
 }

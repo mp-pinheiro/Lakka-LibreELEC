@@ -1,87 +1,95 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="bcm2835-driver"
-PKG_VERSION="1.20211029"
-PKG_SHA256="22d0d5d2df73263bd0e6bdcd31c7e0d97ea6c438834e2cfaa51cb958f20b7205"
+PKG_VERSION="de7aa7e"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.broadcom.com"
-# URL for commit hash
-#PKG_URL="https://github.com/raspberrypi/firmware/archive/$PKG_VERSION.tar.gz"
-# URL for release tag
-PKG_URL="https://github.com/raspberrypi/firmware/archive/refs/tags/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain dtc"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_TARGET="toolchain"
+PKG_PRIORITY="optional"
+PKG_SECTION="graphics"
+PKG_SHORTDESC="OpenMAX-bcm2835: OpenGL-ES and OpenMAX driver for BCM2835"
 PKG_LONGDESC="OpenMAX-bcm2835: OpenGL-ES and OpenMAX driver for BCM2835"
-PKG_TOOLCHAIN="manual"
 
-# Set SoftFP ABI or HardFP ABI
-if [ "${TARGET_FLOAT}" = "soft" ]; then
-  PKG_FLOAT="softfp"
-else
-  PKG_FLOAT="hardfp"
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
+
+if [ "$TARGET_FLOAT" = "softfp" -o "$TARGET_FLOAT" = "soft" ]; then
+  FLOAT="softfp"
+elif [ "$TARGET_FLOAT" = "hard" ]; then
+  FLOAT="hardfp"
 fi
 
+make_target() {
+  mkdir -p $SYSROOT_PREFIX/usr/include
+    cp -PRv $FLOAT/opt/vc/include/* $SYSROOT_PREFIX/usr/include
+
+  mkdir -p $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libEGL.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libGLESv2.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libbcm_host.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libcontainers.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libopenmaxil.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libvchiq_arm.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libvcos.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_components.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_core.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_util.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_vc_client.so $SYSROOT_PREFIX/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libvcsm.so $SYSROOT_PREFIX/usr/lib
+}
+
 makeinstall_target() {
-  # Install vendor header files except proprietary GL headers
-  mkdir -p ${SYSROOT_PREFIX}/usr/include
-    for f in $(cd ${PKG_FLOAT}/opt/vc/include; ls); do
-      cp -PRv ${PKG_FLOAT}/opt/vc/include/$f ${SYSROOT_PREFIX}/usr/include
-    done
+  mkdir -p $INSTALL/usr/sbin
+    cp -PRv $FLOAT/opt/vc/sbin/vcfiled $INSTALL/usr/sbin
 
-  # Install vendor libs & pkgconfigs except proprietary GL libs
-  mkdir -p ${SYSROOT_PREFIX}/usr/lib
-    for f in $(cd ${PKG_FLOAT}/opt/vc/lib; ls *.so *.a ); do
-      cp -PRv ${PKG_FLOAT}/opt/vc/lib/$f              ${SYSROOT_PREFIX}/usr/lib
-    done
-    mkdir -p ${SYSROOT_PREFIX}/usr/lib/pkgconfig
-      for f in $(cd ${PKG_FLOAT}/opt/vc/lib/pkgconfig; ls ); do
-        cp -PRv ${PKG_FLOAT}/opt/vc/lib/pkgconfig/$f  ${SYSROOT_PREFIX}/usr/lib/pkgconfig
-      done
+  mkdir -p $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libEGL.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libGLESv2.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libbcm_host.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libcontainers.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libopenmaxil.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libvchiq_arm.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libvcos.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_components.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_core.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_util.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libmmal_vc_client.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/lib/libvcsm.so $INSTALL/usr/lib
 
-  # Update prefix in vendor pkgconfig files
-  for PKG_CONFIGS in $(find "${SYSROOT_PREFIX}/usr/lib" -type f -name "*.pc" 2>/dev/null); do
-    sed -e "s#prefix=/opt/vc#prefix=/usr#g" -i "${PKG_CONFIGS}"
-  done
+# some usefull debug tools
+  mkdir -p $INSTALL/usr/bin
+    cp -PRv $FLOAT/opt/vc/bin/vcdbg $INSTALL/usr/bin
+      cp -PRv $FLOAT/opt/vc/lib/libdebug_sym.so $INSTALL/usr/lib
+    cp -PRv $FLOAT/opt/vc/bin/vcgencmd $INSTALL/usr/bin
+    cp -PRv $FLOAT/opt/vc/bin/tvservice $INSTALL/usr/bin
+    cp -PRv $FLOAT/opt/vc/bin/edidparser $INSTALL/usr/bin
 
-  # Create symlinks to /opt/vc to satisfy hardcoded include & lib paths
-  mkdir -p ${SYSROOT_PREFIX}/opt/vc
-    ln -sf ${SYSROOT_PREFIX}/usr/lib     ${SYSROOT_PREFIX}/opt/vc/lib
-    ln -sf ${SYSROOT_PREFIX}/usr/include ${SYSROOT_PREFIX}/opt/vc/include
+  mkdir -p $INSTALL/opt/vc
+    ln -sf /usr/lib $INSTALL/opt/vc/lib
+}
 
-  # Install vendor libs except proprietary GL
-  mkdir -p ${INSTALL}/usr/lib
-    for f in $(cd ${PKG_FLOAT}/opt/vc/lib; ls *.so); do
-      cp -PRv ${PKG_FLOAT}/opt/vc/lib/$f ${INSTALL}/usr/lib
-    done
-
-  # Install useful tools
-  mkdir -p ${INSTALL}/usr/bin
-    cp -PRv ${PKG_FLOAT}/opt/vc/bin/dtoverlay  ${INSTALL}/usr/bin
-    ln -s dtoverlay                            ${INSTALL}/usr/bin/dtparam
-    cp -PRv ${PKG_FLOAT}/opt/vc/bin/vcdbg      ${INSTALL}/usr/bin
-    cp -PRv ${PKG_FLOAT}/opt/vc/bin/vcgencmd   ${INSTALL}/usr/bin
-    cp -PRv ${PKG_FLOAT}/opt/vc/bin/vcmailbox  ${INSTALL}/usr/bin
-    cp -PRv ${PKG_FLOAT}/opt/vc/bin/tvservice  ${INSTALL}/usr/bin
-    cp -PRv ${PKG_FLOAT}/opt/vc/bin/edidparser ${INSTALL}/usr/bin
-
-  # Create symlinks to /opt/vc to satisfy hardcoded lib paths
-  mkdir -p ${INSTALL}/opt/vc
-    ln -sf /usr/bin ${INSTALL}/opt/vc/bin
-    ln -sf /usr/lib ${INSTALL}/opt/vc/lib
-
-  # remove pre-built binaries in case they will be provided by the rpi_userland package
-  if listcontains "${ADDITIONAL_PACKAGES}" "rpi_userland" ; then
-    rm -f ${INSTALL}/usr/lib/libbcm_host.so
-    rm -f ${INSTALL}/usr/lib/libdebug_sym.so
-    rm -f ${INSTALL}/usr/lib/libdtovl.so
-    rm -f ${INSTALL}/usr/lib/libvchiq_arm.so
-    rm -f ${INSTALL}/usr/lib/libvcos.so
-    rm -f ${INSTALL}/usr/bin/dtmerge
-    rm -f ${INSTALL}/usr/bin/dtoverlay
-    rm -f ${INSTALL}/usr/bin/tvservice
-    rm -f ${INSTALL}/usr/bin/vcgencmd
-    rm -f ${INSTALL}/usr/bin/vchiq_test
-    rm -f ${INSTALL}/usr/bin/vcmailbox
-  fi
+post_install() {
+  enable_service fbset.service
+  enable_service unbind-console.service
 }

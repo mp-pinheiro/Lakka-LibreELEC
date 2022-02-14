@@ -1,19 +1,23 @@
 #!/bin/sh
-
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
-
-if [ -f /storage/.config/suspend-modules.conf ]; then
-    . /storage/.config/suspend-modules.conf
-    custom_modules="${SUSPEND_MODULES}"
-    SUSPEND_MODULES=""
-fi
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 . /etc/suspend-modules.conf
-
-if [ -n "${custom_modules}" ]; then
-    SUSPEND_MODULES="${SUSPEND_MODULES} ${custom_modules}"
-fi
 
 modunload()
 {
@@ -51,7 +55,7 @@ modunload()
 _rmmod()
 {
     if modprobe -r "$1"; then
-        touch "/run/libreelec/suspend/module:$1"
+        touch "/run/openelec/suspend/module:$1"
         return 0
     else
         logger -t suspend-modules "# could not unload '$1', usage count was $2"
@@ -61,7 +65,7 @@ _rmmod()
 
 resume_modules()
 {
-    for x in /run/libreelec/suspend/module:* ; do
+    for x in /run/openelec/suspend/module:* ; do
         [ -O "${x}" ] || continue
         modprobe "${x##*:}" &>/dev/null && \
             logger -t resume-modules "Reloaded module ${x##*:}." || \
@@ -73,8 +77,8 @@ suspend_modules()
 {
     [ -z "$SUSPEND_MODULES" ] && return 0
     # clean up
-    rm -rf /run/libreelec/suspend
-    mkdir -p /run/libreelec/suspend
+    rm -rf /run/openelec/suspend
+    mkdir -p /run/openelec/suspend
     for x in $SUSPEND_MODULES ; do
         modunload $x && \
             logger -t suspend-modules "Unloading kernel module $x: Done" || \

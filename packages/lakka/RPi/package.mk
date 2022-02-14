@@ -23,28 +23,14 @@ PKG_VERSION=""
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/libretro/Lakka-LibreELEC"
+PKG_SITE="https://github.com/lakkatv/Lakka"
 PKG_URL=""
-PKG_DEPENDS_TARGET="retroarch"
-
-if [ "$DEVICE" != "GPICase" ] ; then
-  PKG_DEPENDS_TARGET+=" wii-u-gc-adapter wiringPi mk_arcade_joystick_rpi joycond"
-fi
-
-if [ "$DEVICE" = "GPICase" ]; then
-  PKG_DEPENDS_TARGET+=" gpicase-safeshutdown"
-fi
-
+PKG_DEPENDS_TARGET="retroarch scummvm dosbox mgba prosystem o2em genesis-plus-gx 81 fuse-libretro gw-libretro lutro gpsp 2048 vecx dinothawr prboom beetle-wswan beetle-ngp beetle-pce beetle-sgx handy picodrive pocketsnes nxengine fceumm gambatte stella fba libretro-ffmpeg"
 PKG_PRIORITY="optional"
 PKG_SECTION="virtual"
-PKG_SHORTDESC="Lakka metapackage for RPi devices"
+PKG_SHORTDESC="Lakka metapackage for RPi"
 PKG_LONGDESC=""
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-post_install() {
-  if [ "$DEVICE" = "GPICase" ]; then
-    enable_service disable-hdmi.service
-  fi
-}

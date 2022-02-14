@@ -1,22 +1,40 @@
-# SPDX-License-Identifier: GPL-2.0
-# Copyright (C) 2019 Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="flashrom"
-PKG_VERSION="1.1"
-PKG_SHA256="aeada9c70c22421217c669356180c0deddd0b60876e63d2224e3260b90c14e19"
+PKG_VERSION="0.9.6"
+PKG_REV="1"
+PKG_ARCH="i386 x86_64"
 PKG_LICENSE="GPL"
-PKG_SITE="https://www.flashrom.org/Flashrom"
-PKG_URL="https://download.flashrom.org/releases/${PKG_NAME}-v${PKG_VERSION}.tar.bz2"
-PKG_DEPENDS_TARGET="toolchain libusb-compat"
-PKG_LONGDESC="flashrom is a utility for identifying, reading, writing, verifying and erasing flash chips. It is designed to flash BIOS/EFI/coreboot/firmware/optionROM images on mainboards, network/graphics/storage controller cards, and various other programmer devices."
+PKG_SITE="http://www.flashrom.org"
+PKG_URL="http://download.flashrom.org/releases/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_DEPENDS_TARGET="toolchain zlib pciutils libftdi1"
+PKG_PRIORITY="optional"
+PKG_SECTION="tools"
+PKG_SHORTDESC="flashrom: linux BIOS programmer"
+PKG_LONGDESC="flashrom is a utility for identifying, reading, writing, verifying and erasing flash chips. It is designed to flash BIOS/EFI/coreboot/firmware/optionROM images on mainboards, network/graphics/storage controller cards, and various programmer devices."
 
-PKG_MAKE_OPTS_TARGET="PREFIX=/usr \
-                      CONFIG_ENABLE_LIBPCI_PROGRAMMERS=no \
-                      CONFIG_FT2232_SPI=no \
-                      CONFIG_USBBLASTER_SPI=no \
-                      CONFIG_JLINK_SPI=no"
-PKG_MAKEINSTALL_OPTS_TARGET="${PKG_MAKE_OPTS_TARGET}"
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
-post_makeinstall_target() {
-  rm -fr ${INSTALL}/usr/share/man
+PKG_MAKE_OPTS_TARGET="CC=$TARGET_CC STRIP=$STRIP PREFIX=/usr WARNERROR=no"
+PKG_MAKEINSTALL_OPTS_TARGET="CC=$TARGET_CC STRIP=$STRIP PREFIX=/usr WARNERROR=no"
+
+pre_make_target() {
+  export LDFLAGS="$LDFLAGS -ludev -lkmod"
 }

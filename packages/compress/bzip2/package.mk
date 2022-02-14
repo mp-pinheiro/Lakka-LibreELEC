@@ -1,44 +1,43 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="bzip2"
-PKG_VERSION="1.0.8"
-PKG_SHA256="ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"
+PKG_VERSION="1.0.6"
+PKG_REV="1"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://sourceware.org/bzip2/"
-PKG_URL="https://sourceware.org/pub/bzip2/bzip2-${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_HOST="ccache:host"
+PKG_SITE="http://www.bzip.org"
+PKG_URL="http://www.bzip.org/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_LONGDESC="A high-quality bzip2 data compressor."
-PKG_BUILD_FLAGS="+pic +pic:host"
+PKG_PRIORITY="optional"
+PKG_SECTION="compress"
+PKG_SHORTDESC="bzip2 data compressor"
+PKG_LONGDESC="bzip2 is a freely available, patent free (see below), high-quality data compressor. It typically compresses files to within 10% to 15% of the best available techniques (the PPM family of statistical compressors), whilst being around twice as fast at compression and six times faster at decompression."
 
-pre_build_host() {
-  mkdir -p $PKG_BUILD/.$HOST_NAME
-  cp -r $PKG_BUILD/* $PKG_BUILD/.$HOST_NAME
-}
-
-make_host() {
-  cd $PKG_BUILD/.$HOST_NAME
-  make -f Makefile-libbz2_so CC=$HOST_CC CFLAGS="$CFLAGS"
-}
-
-makeinstall_host() {
-  make install PREFIX=$TOOLCHAIN
-}
-
-pre_build_target() {
-  mkdir -p $PKG_BUILD/.$TARGET_NAME
-  cp -r $PKG_BUILD/* $PKG_BUILD/.$TARGET_NAME
-}
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
 pre_make_target() {
-  cd $PKG_BUILD/.$TARGET_NAME
   sed -e "s,ln -s (lib.*),ln -snf \$$1; ln -snf libbz2.so.$PKG_VERSION libbz2.so,g" -i Makefile-libbz2_so
 }
 
 make_target() {
-  make -f Makefile-libbz2_so CC=$CC CFLAGS="$CFLAGS"
+  make -f Makefile-libbz2_so CC=$TARGET_CC CFLAGS="$CFLAGS -fPIC -DPIC"
 }
 
 post_make_target() {

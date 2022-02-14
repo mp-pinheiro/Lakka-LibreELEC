@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="lutro"
-PKG_VERSION="ba4b4f2"
+PKG_VERSION="66cf08a"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/libretro-lutro"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -34,18 +34,12 @@ PKG_LONGDESC="An experimental lua game framework for libretro inspired by LÖVE"
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_make_target() {
-  if target_has_feature neon; then
-    export HAVE_NEON=1
-  fi
-}
-
 make_target() {
   PTR_SIZE="-m32"
   if [ "$ARCH" == "x86_64" ]; then
     PTR_SIZE="-m64"
   fi  
-  make HOST_CC="$HOST_CC" PTR_SIZE="$PTR_SIZE" CROSS="$TARGET_PREFIX" HAVE_COMPOSITION=1
+  make WANT_JIT=1 HOST_CC="$HOST_CC" PTR_SIZE="$PTR_SIZE" CROSS="$TARGET_PREFIX"
 }
 
 makeinstall_target() {

@@ -19,12 +19,12 @@
 ################################################################################
 
 PKG_NAME="libretro-database"
-PKG_VERSION="c470ddb"
+PKG_VERSION="074523b"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libretro/libretro-database"
-PKG_URL="$PKG_SITE.git"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
@@ -34,10 +34,11 @@ PKG_LONGDESC="Repository containing cheatcode files, content data files, etc."
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-configure_target() {
-  cd $PKG_BUILD
+make_target() {
+  :
 }
 
 makeinstall_target() {
-  make install INSTALLDIR="$INSTALL/usr/share/libretro-database"
+  mkdir -p $INSTALL/usr/share/libretro-database
+  cp -r * $INSTALL/usr/share/libretro-database
 }

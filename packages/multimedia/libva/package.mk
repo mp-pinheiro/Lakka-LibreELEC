@@ -1,29 +1,57 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="libva"
-PKG_VERSION="2.13.0"
-PKG_SHA256="6b7ec7d4fa204dad3f266450981f1f0892400c03afd3e00ac11f8ccade5aaaa1"
+PKG_VERSION="1.5.0"
+PKG_REV="1"
 PKG_ARCH="i386 x86_64"
 PKG_LICENSE="GPL"
-PKG_SITE="https://01.org/linuxmedia"
-PKG_URL="https://github.com/intel/libva/archive/${PKG_VERSION}.tar.gz"
-PKG_LONGDESC="Libva is an implementation for VA-API (VIdeo Acceleration API)."
-PKG_TOOLCHAIN="meson"
+PKG_SITE="http://freedesktop.org/wiki/Software/vaapi"
+PKG_URL="http://cgit.freedesktop.org/vaapi/libva/snapshot/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_DEPENDS_TARGET="toolchain libX11 libXext libXfixes libdrm mesa glu"
+PKG_PRIORITY="optional"
+PKG_SECTION="multimedia"
+PKG_SHORTDESC="libva: The main motivation for VAAPI (Video Acceleration API) is to enable hardware accelerated video decode/encode at various entry-points (VLD, IDCT, Motion Compensation etc.) for the prevailing coding standards today (MPEG-2, MPEG-4 ASP/H.263, MPEG-4 AVC/H.264, and VC-1/VMW3)."
+PKG_LONGDESC="The main motivation for VAAPI (Video Acceleration API) is to enable hardware accelerated video decode/encode at various entry-points (VLD, IDCT, Motion Compensation etc.) for the prevailing coding standards today (MPEG-2, MPEG-4 ASP/H.263, MPEG-4 AVC/H.264, and VC-1/VMW3). Extending XvMC was considered, but due to its original design for MPEG-2 MotionComp only, it made more sense to design an interface from scratch that can fully expose the video decode capabilities in today's GPUs."
 
-if [ "${DISPLAYSERVER}" = "x11" ]; then
-  PKG_DEPENDS_TARGET="toolchain libX11 libXext libXfixes libdrm"
-  DISPLAYSERVER_LIBVA="-Dwith_x11=yes -Dwith_glx=no -Dwith_wayland=no"
-elif [ "${DISPLAYSERVER}" = "weston" ]; then
-  DISPLAYSERVER_LIBVA="-Dwith_x11=no -Dwith_glx=no -Dwith_wayland=yes"
-  PKG_DEPENDS_TARGET="toolchain libdrm wayland"
-else
-  PKG_DEPENDS_TARGET="toolchain libdrm"
-  DISPLAYSERVER_LIBVA="-Dwith_x11=no -Dwith_glx=no -Dwith_wayland=no"
-fi
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="yes"
 
-PKG_MESON_OPTS_TARGET="-Ddisable_drm=false \
-                       -Denable_docs=false \
-                       -Denable_va_messaging=true \
-                       ${DISPLAYSERVER_LIBVA}"
+PKG_CONFIGURE_OPTS_TARGET="--disable-silent-rules \
+                           --disable-docs \
+                           --enable-drm \
+                           --enable-x11 \
+                           --enable-glx \
+                           --disable-egl \
+                           --disable-wayland \
+                           --disable-dummy-driver \
+                           --with-drivers-path=/usr/lib/va"
+
+pre_configure_target() {
+# todo: libva fails to build in subdirs
+  cd $ROOT/$PKG_BUILD
+  rm -rf .$TARGET_NAME
+}
+
+post_makeinstall_target() {
+  rm -rf $INSTALL/usr/bin
+  if [ "$DEVTOOLS" = yes ]; then
+    mkdir -p $INSTALL/usr/bin
+      cp test/vainfo/.libs/vainfo $INSTALL/usr/bin
+  fi
+}

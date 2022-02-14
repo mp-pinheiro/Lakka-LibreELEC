@@ -1,7 +1,6 @@
 [Unit]
 Description=Sundtek driver service
-After=network-online.service
-Requires=network-online.service
+After=network.target
 
 [Service]
 Type=oneshot

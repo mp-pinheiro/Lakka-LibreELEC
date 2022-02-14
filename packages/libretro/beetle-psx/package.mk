@@ -19,40 +19,22 @@
 ################################################################################
 
 PKG_NAME="beetle-psx"
-PKG_VERSION="a5139d8"
+PKG_VERSION="d9dd6c2"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
-PKG_SITE="https://github.com/libretro/beetle-psx-libretro"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/libretro/mednafen-libretro"
+PKG_URL="$LAKKA_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="libretro"
 PKG_SHORTDESC="Standalone port of Mednafen PSX to libretro."
 PKG_LONGDESC="Standalone port of Mednafen PSX to libretro."
-PKG_TOOLCHAIN="make"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-if [ "$OPENGL_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGL"
-fi
-
-if [ "$VULKAN_SUPPORT" = yes ]; then
-  PKG_DEPENDS_TARGET+=" $VULKAN"
-fi
-
-PKG_MAKE_OPTS_TARGET="HAVE_CDROM=1 LINK_STATIC_LIBCPLUSPLUS=0"
-
-if [ "$OPENGL_SUPPORT" = yes -a "$VULKAN_SUPPORT" = yes ]; then
-  PKG_MAKE_OPTS_TARGET+=" HAVE_HW=1"
-elif [ "$OPENGL_SUPPORT" = yes ]; then
-  PKG_MAKE_OPTS_TARGET+=" HAVE_OPENGL=1"
-elif [ "$VULKAN_SUPPORT" = yes ]; then
-  PKG_MAKE_OPTS_TARGET+=" HAVE_VULKAN=1"
-fi
-
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
-  cp *.so $INSTALL/usr/lib/libretro/
+  cp mednafen_psx_libretro.so $INSTALL/usr/lib/libretro/
 }
