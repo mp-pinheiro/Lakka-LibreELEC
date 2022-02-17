@@ -125,7 +125,6 @@ fi
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-vg \
                            --disable-sdl \
-                           --disable-sdl2 \
                            --disable-ssl \
                            $RETROARCH_GL \
                            $RETROARCH_NEON \
@@ -290,8 +289,9 @@ makeinstall_target() {
 
   # Generic
   if [ "$PROJECT" = "Generic" ]; then
-    echo "video_context_driver = \"khr_display\"" >> $INSTALL/etc/retroarch.cfg
-#    echo "video_driver = \"vulkan\"" >> $INSTALL/etc/retroarch.cfg
+    echo "video_driver  = \"sdl\"" >> $INSTALL/etc/retroarch.cfg
+    echo "video_context_driver = " >> $INSTALL/etc/retroarch.cfg
+    # echo "video_driver = \"vulkan\"" >> $INSTALL/etc/retroarch.cfg
   fi
 
   if [ "$DEVICE" = "OdroidGoAdvance" ]; then

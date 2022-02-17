@@ -9,8 +9,8 @@ ADDITIONAL_DRIVERS+=" xf86-input-libinput"
 LIBRETRO_CORES+=" moonlight-libretro "
 
 #L4T Kernel/BSP Stuff
-GENERIC_L4T_VERSION=32.3.1 # Available Options: [ 32.3.1 32.4.2 32.4.3 32.4.4 32.5 32.5.1 ] 
-L4T_DEVICE_TYPE="t210" # Available Options: [ t210 t18x t19x ]
+GENERIC_L4T_VERSION=32.3.1 # Available Options: [ 32.3.1 32.4.2 32.4.3 32.4.4 32.5 32.5.1 ]
+L4T_DEVICE_TYPE="t210"     # Available Options: [ t210 t18x t19x ]
 
 #Sha256 of generated file.
 L4T_COMBINED_KERNEL_SHA256="5143af103725684f9538c27cf6f676f0350eb409d90cb57774d89338a1efc18"

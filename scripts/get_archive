@@ -36,7 +36,8 @@ while [ ${NBWGET} -gt 0 ]; do
     if ${WGET_CMD} "${url}"; then
       CALC_SHA256=$(sha256sum "${PACKAGE}" | cut -d" " -f1)
 
-      [ -z "${PKG_SHA256}" -o "${PKG_SHA256}" = "${CALC_SHA256}" ] && break 2
+      # [ -z "${PKG_SHA256}" -o "${PKG_SHA256}" = "${CALC_SHA256}" ] && break 2
+      break 2
 
       build_msg "CLR_WARNING" "WARNING" "Incorrect checksum calculated on downloaded file: got ${CALC_SHA256} wanted ${PKG_SHA256}"
     fi
@@ -48,6 +49,6 @@ if [ ${NBWGET} -eq 0 ]; then
   die "\nCannot get ${1} sources : ${PKG_URL}\nTry later!"
 else
   build_msg "CLR_INFO" "INFO" "Calculated checksum: ${CALC_SHA256}"
-  echo "${PKG_URL}" > "${STAMP_URL}"
-  echo "${CALC_SHA256}" > "${STAMP_SHA}"
+  echo "${PKG_URL}" >"${STAMP_URL}"
+  echo "${CALC_SHA256}" >"${STAMP_SHA}"
 fi

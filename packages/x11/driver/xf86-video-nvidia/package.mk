@@ -50,7 +50,7 @@ makeinstall_target() {
       ln -sf /var/lib/libnvidia-ml.so.1 $INSTALL/usr/lib/libnvidia-ml.so.1
     cp -P libnvidia-tls.so.$PKG_VERSION $INSTALL/usr/lib
   # rename to not conflicting with Mesa libGL.so
-    cp -P libGL.so.$PKG_VERSION $INSTALL/usr/lib/libGL_nvidia.so.1
+    cp -P libGL.so.1.7.0 $INSTALL/usr/lib/libGL_nvidia.so.1
 
   mkdir -p $INSTALL/$(get_full_module_dir)/nvidia
     ln -sf /var/lib/nvidia.ko $INSTALL/$(get_full_module_dir)/nvidia/nvidia.ko

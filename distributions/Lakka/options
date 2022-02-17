@@ -1,133 +1,133 @@
 # LTO (Link Time Optimization) support
-  LTO_SUPPORT="yes"
+LTO_SUPPORT="yes"
 
 # GOLD (Google Linker) support
-  GOLD_SUPPORT="yes"
+GOLD_SUPPORT="yes"
 
 # HARDENING (security relevant linker and compiler flags) support
-  HARDENING_SUPPORT="no"
+HARDENING_SUPPORT="no"
 
 # Name of the Distro to build (full name, without special characters)
-  DISTRONAME="Lakka"
+DISTRONAME="Lakka"
 
 # short project description
-  DESCRIPTION="Lakka is a fast and user-friendly retroarch turnkey distribution"
+DESCRIPTION="Lakka is a fast and user-friendly retroarch turnkey distribution"
 
 # Welcome Message for e.g. SSH Server (up to 5 Lines)
-  GREETING0="###########################################"
-  GREETING1="# Lakka - The DIY retro emulation console #"
-  GREETING2="# ...... visit http://www.lakka.tv ...... #"
-  GREETING3="###########################################"
-  GREETING4=""
+GREETING0="###########################################"
+GREETING1="# Lakka - The DIY retro emulation console #"
+GREETING2="# ...... visit http://www.lakka.tv ...... #"
+GREETING3="###########################################"
+GREETING4=""
 
 # Root password to integrate in the target system
-  ROOT_PASSWORD="root"
+ROOT_PASSWORD="root"
 
 # Install glibc locales to the build (yes / no)
-  GLIBC_LOCALES="yes"
+GLIBC_LOCALES="yes"
 
 # Mediacenter to use (kodi / no)
-  MEDIACENTER="no"
+MEDIACENTER="no"
 
 # additional drivers to install:
 # for a list of additional drivers see packages/linux-drivers
 # Space separated list is supported,
 # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
-  ADDITIONAL_DRIVERS=""
+ADDITIONAL_DRIVERS=""
 
 # build and install bluetooth support (yes / no)
-  BLUETOOTH_SUPPORT="yes"
+BLUETOOTH_SUPPORT="yes"
 
 # build and install Avahi (Zeroconf) daemon (yes / no)
-  AVAHI_DAEMON="yes"
+AVAHI_DAEMON="yes"
 
 # build with NFS support (mounting nfs shares via the OS) (yes / no)
-  NFS_SUPPORT="yes"
+NFS_SUPPORT="yes"
 
 # build with Samba Client support (mounting samba shares via the OS) (yes / no)
-  SAMBA_SUPPORT="yes"
+SAMBA_SUPPORT="yes"
 
 # build and install Samba Server (yes / no)
-  SAMBA_SERVER="yes"
+SAMBA_SERVER="yes"
 
 # build and install SFTP Server (yes / no)
-  SFTP_SERVER="yes"
+SFTP_SERVER="yes"
 
 # build and install OpenVPN support (yes / no)
-  OPENVPN_SUPPORT="yes"
+OPENVPN_SUPPORT="yes"
 
 # build and install WireGuard support (yes / no)
-  WIREGUARD_SUPPORT="yes"
+WIREGUARD_SUPPORT="yes"
 
 # build and install diskmounter support (udevil)
 # this service provide auto mounting support for external drives in the
 # mediacenter also automount internally drives at boottime via udev (yes / no)
-  UDEVIL="yes"
+UDEVIL="yes"
 
 # build and install exFAT fuse support (yes / no)
-  EXFAT="yes"
+EXFAT="yes"
 
 # build and install NTFS-3G fuse support (yes / no)
-  NTFS3G="yes"
+NTFS3G="yes"
 
 # build and install hfs filesystem utilities (yes / no)
-  HFSTOOLS="yes"
+HFSTOOLS="yes"
 
 # Windowmanager to use (fluxbox / none)
-  WINDOWMANAGER="none"
+WINDOWMANAGER="none"
 
 # Xorg Graphic drivers to use (all / i915,crocus,r200,r300,r600,nvidia)
 # Space separated list is supported,
 # e.g. GRAPHIC_DRIVERS="i915 crocus r300 r600 radeonsi nvidia"
-  GRAPHIC_DRIVERS="r300 r600 radeonsi iris crocus i915 nouveau"
+GRAPHIC_DRIVERS="r300 r600 radeonsi nvidia"
 
 # build and install remote support (yes / no)
-  REMOTE_SUPPORT="no"
+REMOTE_SUPPORT="no"
 
 # build and install Joystick support (yes / no)
-  JOYSTICK_SUPPORT="yes"
+JOYSTICK_SUPPORT="yes"
 
 # build and install CEC adapter support (yes / no)
-# CEC_SUPPORT="no"
+CEC_SUPPORT="yes"
 
 # build and install CEC framework support (yes / no)
-  CEC_FRAMEWORK_SUPPORT="no"
+CEC_FRAMEWORK_SUPPORT="no"
 
 # build and install iSCSI support - iscsistart (yes / no)
-  ISCSI_SUPPORT="yes"
+ISCSI_SUPPORT="yes"
 
 # Support for partitioning and formating disks in initramfs (yes / no)
 # This adds support for parted and mkfs.ext3/4 to initramfs for OEM usage
-  INITRAMFS_PARTED_SUPPORT="no"
+INITRAMFS_PARTED_SUPPORT="no"
 
 # build with swap support (yes / no)
-  SWAP_SUPPORT="yes"
+SWAP_SUPPORT="no"
 
 # swap support enabled per default (yes / no)
-  SWAP_ENABLED_DEFAULT="no"
+SWAP_ENABLED_DEFAULT="no"
 
 # swapfile size if SWAP_SUPPORT=yes in MB
-  SWAPFILESIZE="128"
+SWAPFILESIZE="256"
 
 # additional packages to install:
 # Space separated list is supported,
 # e.g. ADDITIONAL_PACKAGES="PACKAGE1 PACKAGE2"
-  ADDITIONAL_PACKAGES="rsync xpadneo"
+ADDITIONAL_PACKAGES="rsync xpadneo"
 
 # build with installer (yes / no)
-  INSTALLER_SUPPORT="yes"
+INSTALLER_SUPPORT="yes"
 
 # Testpackages for development (yes / no)
-  TESTING="no"
+TESTING="no"
 
 # OEM packages for OEM's (yes / no)
-  OEM_SUPPORT="yes"
+OEM_SUPPORT="yes"
 
 # build and install nano text editor (yes / no)
-  NANO_EDITOR="yes"
+NANO_EDITOR="yes"
 
 # cron support (yes / no)
-  CRON_SUPPORT="yes"
+CRON_SUPPORT="yes"
 
 # Distribution Specific source location
 DISTRO_MIRROR="http://sources.libreelec.tv/mirror"
@@ -137,13 +137,13 @@ DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
 # ADDON_SERVER_URL="https://addons.libreelec.tv"
 
 # set the addon dirs
-  ADDON_PATH="$ADDON_VERSION/${DEVICE:-$PROJECT}/$TARGET_ARCH"
-  ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
+ADDON_PATH="$ADDON_VERSION/${DEVICE:-$PROJECT}/$TARGET_ARCH"
+ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
 # Default size of system partition, in MB, eg. 512
-  SYSTEM_SIZE=2048
+SYSTEM_SIZE=2048
 # Default system partition offset, in sectors, eg. 2048
-  SYSTEM_PART_START=8192
+SYSTEM_PART_START=8192
 
 # Configure debug groups (space delimited key=value pairs, with each value comma-delimited) and default group when DEBUG=yes
 # Use ! or - prefix to prevent a dependent package from being built with debug. Add + suffix to build dependenencies with debug.
@@ -151,11 +151,11 @@ DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
 # DEBUG_GROUP_YES="kodi+"
 
 # Default supported get handlers (archive, git, file etc.)
-  GET_HANDLER_SUPPORT="archive git"
+GET_HANDLER_SUPPORT="archive git"
 
 # Partition labels for USB/SD installation media
-  DISTRO_BOOTLABEL="LAKKA"
-  DISTRO_DISKLABEL="LAKKA_DISK"
+DISTRO_BOOTLABEL="LAKKA"
+DISTRO_DISKLABEL="LAKKA_DISK"
 
 # Settings package name - blank if not required
 # DISTRO_PKG_SETTINGS="LibreELEC-settings"
@@ -166,14 +166,14 @@ DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
 # IR remote keymaps supported in default config
 # IR_REMOTE_KEYMAPS=""
 
-  LAKKA_MIRROR="http://sources.lakka.tv"
+LAKKA_MIRROR="http://sources.lakka.tv"
 
-  DISTRO_WEBSITE="https://www.lakka.tv/"
+DISTRO_WEBSITE="https://www.lakka.tv/"
 
 # PINN group for the distro
-  DISTRO_PINN_GROUP="Games"
+DISTRO_PINN_GROUP="Games"
 
-  LIBRETRO_CORES=""\
+LIBRETRO_CORES=""\
 " 2048 "\
 " 81 "\
 " atari800 "\
@@ -197,7 +197,6 @@ DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
 " cannonball "\
 " cap32 "\
 " chailove "\
-" citra "\
 " crocods "\
 " daphne "\
 " desmume "\
@@ -288,77 +287,77 @@ DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
 ""
 
 # disable some cores
-  if [ "$PROJECT" = "RPi" ]; then
-    LIBRETRO_CORES="${LIBRETRO_CORES// yabasanshiro /}"
-    if [ "$DEVICE" = "RPi" -o "$DEVICE" = "GPICase" ]; then
-      LIBRETRO_CORES="${LIBRETRO_CORES// 4do /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// beetle-bsnes /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// beetle-psx /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// beetle-saturn /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// beetle-vb /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// bsnes-mercury /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// bsnes2014 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// bsnes /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// bsnes_hd /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// citra /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// desmume-2015 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// desmume /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// dolphin /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// dosbox-svn /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// dosbox-pure /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// dosbox /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// fbneo /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// flycast /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// genesis-plus-gx /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// higan-sfc-balanced /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// higan-sfc /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// kronos /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// mame2003-plus /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// mame2010 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// mame2015 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// meowpc98 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// mesen-s /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// mesen /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// mupen64plus_next /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// openlara /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// play /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// parallel-n64 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// ppsspp /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// puae /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// snes9x2005_plus /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// snes9x2005 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// snes9x2010 /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// snes9x /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// swanstation /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// uae4arm /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// vbam /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// virtualjaguar /}"
-      LIBRETRO_CORES="${LIBRETRO_CORES// yabause /}"
-    fi
-    if [ "$DEVICE" = "RPi2" ]; then
-      LIBRETRO_CORES="${LIBRETRO_CORES// play /}"
-    fi
-  elif [ "$PROJECT" = "Amlogic" -o "$PROJECT" = "Rockchip" -o "$PROJECT" = "Allwinner" ]; then
-    LIBRETRO_CORES="${LIBRETRO_CORES// yabasanshiro /}"
-  elif [ "$PROJECT" = "Generic" -a "$ARCH" = "i386" ]; then
+if [ "$PROJECT" = "RPi" ]; then
+  LIBRETRO_CORES="${LIBRETRO_CORES// yabasanshiro /}"
+  if [ "$DEVICE" = "RPi" -o "$DEVICE" = "GPICase" ]; then
+    LIBRETRO_CORES="${LIBRETRO_CORES// 4do /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// beetle-bsnes /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// beetle-psx /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// beetle-saturn /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// beetle-vb /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// bsnes-mercury /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// bsnes2014 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// bsnes /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// bsnes_hd /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// citra /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// desmume-2015 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// desmume /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// dolphin /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// dosbox-svn /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// dosbox-pure /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// dosbox /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// fbneo /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// flycast /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// genesis-plus-gx /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// higan-sfc-balanced /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// higan-sfc /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// kronos /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// mame2003-plus /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// mame2010 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// mame2015 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// meowpc98 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// mesen-s /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// mesen /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// mupen64plus_next /}"
     LIBRETRO_CORES="${LIBRETRO_CORES// openlara /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// play /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// parallel-n64 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// ppsspp /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// puae /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// snes9x2005_plus /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// snes9x2005 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// snes9x2010 /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// snes9x /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// swanstation /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// uae4arm /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// vbam /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// virtualjaguar /}"
+    LIBRETRO_CORES="${LIBRETRO_CORES// yabause /}"
   fi
+  if [ "$DEVICE" = "RPi2" ]; then
+    LIBRETRO_CORES="${LIBRETRO_CORES// play /}"
+  fi
+elif [ "$PROJECT" = "Amlogic" -o "$PROJECT" = "Rockchip" -o "$PROJECT" = "Allwinner" ]; then
+  LIBRETRO_CORES="${LIBRETRO_CORES// yabasanshiro /}"
+elif [ "$PROJECT" = "Generic" -a "$ARCH" = "i386" ]; then
+  LIBRETRO_CORES="${LIBRETRO_CORES// openlara /}"
+fi
 
 # disable kronos for specific platforms/targets
-  if [ "$PROJECT" = "Allwinner" -a "$DEVICE" = "A64"    ] || \
-     [ "$PROJECT" = "Allwinner" -a "$DEVICE" = "H3"     ] || \
-     [ "$PROJECT" = "Rockchip"  -a "$DEVICE" = "RK3328" ]; then
-    LIBRETRO_CORES="${LIBRETRO_CORES// kronos /}"
-  fi
+if [ "$PROJECT" = "Allwinner" -a "$DEVICE" = "A64" ] ||
+  [ "$PROJECT" = "Allwinner" -a "$DEVICE" = "H3" ] ||
+  [ "$PROJECT" = "Rockchip" -a "$DEVICE" = "RK3328" ]; then
+  LIBRETRO_CORES="${LIBRETRO_CORES// kronos /}"
+fi
 
 # add platform specific cores
-  if [ "$PROJECT" = "RPi" ]; then
-    if [ "$DEVICE" = "RPi" -o "$DEVICE" = "Gamegirl" -o "$DEVICE" = "GPICase" ]; then
-      LIBRETRO_CORES+=" mame2000  fbalpha2012 "
-    fi
+if [ "$PROJECT" = "RPi" ]; then
+  if [ "$DEVICE" = "RPi" -o "$DEVICE" = "Gamegirl" -o "$DEVICE" = "GPICase" ]; then
+    LIBRETRO_CORES+=" mame2000  fbalpha2012 "
   fi
+fi
 
 # add melonds to x86_64 and L4T
-  if [ "$ARCH" = "x86_64" -o "$ARCH" = "aarch64" ]; then
-    LIBRETRO_CORES+=" melonds "
-  fi
+if [ "$ARCH" = "x86_64" -o "$ARCH" = "aarch64" ]; then
+  LIBRETRO_CORES+=" melonds "
+fi
