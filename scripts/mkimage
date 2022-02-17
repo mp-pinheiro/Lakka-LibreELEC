@@ -26,9 +26,9 @@ fi
 
 STORAGE_SIZE=32 # STORAGE_SIZE must be >= 32 !
 
-DISK_START_PADDING=$(( (${SYSTEM_PART_START} + 2048 - 1) / 2048 ))
+DISK_START_PADDING=$(((${SYSTEM_PART_START} + 2048 - 1) / 2048))
 DISK_GPT_PADDING=1
-DISK_SIZE=$(( ${DISK_START_PADDING} + ${SYSTEM_SIZE} + ${STORAGE_SIZE} + ${DISK_GPT_PADDING} ))
+DISK_SIZE=$((${DISK_START_PADDING} + ${SYSTEM_SIZE} + ${STORAGE_SIZE} + ${DISK_GPT_PADDING}))
 DISK_BASENAME="${TARGET_IMG}/${IMAGE_NAME}"
 DISK="${DISK_BASENAME}.img"
 
@@ -64,7 +64,7 @@ sync
 
 # create part1
 echo "image: creating part1..."
-SYSTEM_PART_END=$(( ${SYSTEM_PART_START} + (${SYSTEM_SIZE} * 1024 * 1024 / 512) - 1 ))
+SYSTEM_PART_END=$((${SYSTEM_PART_START} + (${SYSTEM_SIZE} * 1024 * 1024 / 512) - 1))
 if [ "${DISK_LABEL}" = "gpt" ]; then
   parted -s "${DISK}" -a min unit s mkpart system fat32 ${SYSTEM_PART_START} ${SYSTEM_PART_END}
   parted -s "${DISK}" set 1 legacy_boot on
@@ -76,8 +76,8 @@ sync
 
 # create part2
 echo "image: creating part2..."
-STORAGE_PART_START=$(( ${SYSTEM_PART_END} + 1 ))
-STORAGE_PART_END=$(( ${STORAGE_PART_START} + (${STORAGE_SIZE} * 1024 * 1024 / 512) - 1 ))
+STORAGE_PART_START=$((${SYSTEM_PART_END} + 1))
+STORAGE_PART_END=$((${STORAGE_PART_START} + (${STORAGE_SIZE} * 1024 * 1024 / 512) - 1))
 if [ "${DISK_LABEL}" = "gpt" ]; then
   parted -s "${DISK}" -a min unit s mkpart storage ext4 ${STORAGE_PART_START} ${STORAGE_PART_END}
 else
@@ -96,12 +96,12 @@ fi
 
 # create filesystem on part1
 echo "image: creating filesystem on part1..."
-OFFSET=$(( ${SYSTEM_PART_START} * 512 ))
+OFFSET=$((${SYSTEM_PART_START} * 512))
 HEADS=4
 TRACKS=32
-SECTORS=$(( ${SYSTEM_SIZE} * 1024 * 1024 / 512 / ${HEADS} / ${TRACKS} ))
+SECTORS=$((${SYSTEM_SIZE} * 1024 * 1024 / 512 / ${HEADS} / ${TRACKS}))
 
-shopt -s expand_aliases  # enables alias expansion in script
+shopt -s expand_aliases # enables alias expansion in script
 alias mformat="mformat -i ${DISK}@@${OFFSET} -h ${HEADS} -t ${TRACKS} -s ${SECTORS}"
 alias mcopy="mcopy -i ${DISK}@@${OFFSET}"
 alias mmd="mmd -i ${DISK}@@${OFFSET}"
@@ -114,7 +114,7 @@ sync
 if [ "${BOOTLOADER}" = "syslinux" ]; then
   # create bootloader configuration
   echo "image: creating bootloader configuration..."
-  cat << EOF > "${LE_TMP}/syslinux.cfg"
+  cat <<EOF >"${LE_TMP}/syslinux.cfg"
 SAY Wait for installer mode to start automatically in 5 seconds...
 SAY
 SAY Options
@@ -133,14 +133,14 @@ LABEL installer
 
 LABEL live
   KERNEL /${KERNEL_NAME}
-  APPEND boot=UUID=${UUID_SYSTEM} live quiet vga=current
+  APPEND boot=UUID=${UUID_SYSTEM} live quiet vga=current textmode retroarch=0
 
 LABEL run
   KERNEL /${KERNEL_NAME}
   APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} portable quiet
 EOF
 
-  cat << EOF > "${LE_TMP}/grub.cfg"
+  cat <<EOF >"${LE_TMP}/grub.cfg"
 set timeout="25"
 set default="Installer"
 menuentry "Installer" {
@@ -159,7 +159,7 @@ EOF
 
   # Lakka - default = live = use medium for storage
   if [ "$DISTRO" = "Lakka" ]; then
-    cat << EOF > "${LE_TMP}/syslinux.cfg"
+    cat <<EOF >"${LE_TMP}/syslinux.cfg"
 SAY Wait for live mode to start automatically in 5 seconds...
 SAY
 SAY Options
@@ -173,14 +173,14 @@ PROMPT 1
 
 LABEL live
   KERNEL /${KERNEL_NAME}
-  APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} tty portable quiet
+  APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} tty portable quiet textmode retroarch=0
 
 LABEL installer
   KERNEL /${KERNEL_NAME}
   APPEND boot=UUID=${UUID_SYSTEM} installer quiet tty vga=current
 EOF
 
-    cat << EOF > "${LE_TMP}/grub.cfg"
+    cat <<EOF >"${LE_TMP}/grub.cfg"
 set timeout="25"
 set default="Live"
 menuentry "Live" {
@@ -216,7 +216,7 @@ EOF
 elif [ "${BOOTLOADER}" = "bcm2835-bootloader" ]; then
   # create bootloader configuration
   echo "image: creating bootloader configuration..."
-  cat << EOF > "${LE_TMP}/cmdline.txt"
+  cat <<EOF >"${LE_TMP}/cmdline.txt"
 boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} quiet ${EXTRA_CMDLINE}
 EOF
 
@@ -240,7 +240,7 @@ EOF
     mcopy "${RELEASE_DIR}/3rdparty/bootloader/dt-blob.bin" ::
   fi
 
-  for dtb in "${RELEASE_DIR}/3rdparty/bootloader/"*.dtb ; do
+  for dtb in "${RELEASE_DIR}/3rdparty/bootloader/"*.dtb; do
     if [ -f "${dtb}" ]; then
       mcopy "${dtb}" ::/$(basename "${dtb}")
     fi
@@ -263,7 +263,7 @@ elif [ "${BOOTLOADER}" = "u-boot" -a \( -n "${UBOOT_SYSTEM}" -o "${UBOOT_VERSION
 
     mkdir -p "${LE_TMP}/extlinux"
 
-    cat << EOF > "${LE_TMP}/extlinux/extlinux.conf"
+    cat <<EOF >"${LE_TMP}/extlinux/extlinux.conf"
 LABEL ${DISTRO}
   LINUX /${KERNEL_NAME}
   FDT /${DTB}
@@ -295,7 +295,7 @@ fi # bootloader
 
 # extract part2 from image to format and copy files
 echo "image: extracting part2 from image..."
-STORAGE_PART_COUNT=$(( ${STORAGE_PART_END} - ${STORAGE_PART_START} + 1 ))
+STORAGE_PART_COUNT=$((${STORAGE_PART_END} - ${STORAGE_PART_START} + 1))
 sync
 dd if="${DISK}" of="${LE_TMP}/part2.ext4" bs=512 skip="${STORAGE_PART_START}" count="${STORAGE_PART_COUNT}" conv=fsync >"${SAVE_ERROR}" 2>&1 || show_error
 
@@ -320,7 +320,7 @@ dd if="${LE_TMP}/part2.ext4" of="${DISK}" bs=512 seek="${STORAGE_PART_START}" co
 
 # extract part1 from image to run fsck
 echo "image: extracting part1 from image..."
-SYSTEM_PART_COUNT=$(( ${SYSTEM_PART_END} - ${SYSTEM_PART_START} + 1 ))
+SYSTEM_PART_COUNT=$((${SYSTEM_PART_END} - ${SYSTEM_PART_START} + 1))
 sync
 dd if="${DISK}" of="${LE_TMP}/part1.fat" bs=512 skip="${SYSTEM_PART_START}" count="${SYSTEM_PART_COUNT}" conv=fsync >"${SAVE_ERROR}" 2>&1 || show_error
 echo "image: checking filesystem on part1..."
@@ -346,13 +346,14 @@ if [ "${PROJECT}" = "Generic" -a "${CREATE_OVA}" = "yes" ]; then
   qemu-img convert -O vmdk -o subformat=streamOptimized "${DISK_BASENAME}.tmp" "${DISK_BASENAME}.vmdk"
   # generate ovf from template
   sed -e "s,@DISTRO@,${DISTRO},g" -e "s,@DISK@,${IMAGE_NAME},g" \
-      -e "s,@OVA_SIZE@,$((${OVA_SIZE}*1024*1024)),g" \
-      "${PROJECT_DIR}/${PROJECT}/config/ovf.template" > "${DISK_BASENAME}.ovf"
+    -e "s,@OVA_SIZE@,$((${OVA_SIZE} * 1024 * 1024)),g" \
+    "${PROJECT_DIR}/${PROJECT}/config/ovf.template" >"${DISK_BASENAME}.ovf"
   # combine ovf and vmdk into official ova
   tar -C "${TARGET_IMG}" -cf "${DISK_BASENAME}.ova" "${IMAGE_NAME}.ovf" "${IMAGE_NAME}.vmdk"
   # create sha256 checksum of ova image
-  ( cd "${TARGET_IMG}"
-    sha256sum "${IMAGE_NAME}.ova" > "${IMAGE_NAME}.ova.sha256"
+  (
+    cd "${TARGET_IMG}"
+    sha256sum "${IMAGE_NAME}.ova" >"${IMAGE_NAME}.ova.sha256"
   )
   echo "image: cleaning up..."
   # remove tmp ${DISK}, vmdk and ovf
@@ -370,8 +371,9 @@ if [ -n "${SUDO_USER}" ]; then
   chown "${SUDO_USER}:" "${DISK}.gz"
 fi
 # create sha256 checksum of image
-( cd "${TARGET_IMG}"
-  sha256sum $(basename "${DISK}").gz > $(basename "${DISK}").gz.sha256
+(
+  cd "${TARGET_IMG}"
+  sha256sum $(basename "${DISK}").gz >$(basename "${DISK}").gz.sha256
 )
 
 # cleanup
