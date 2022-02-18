@@ -122,6 +122,7 @@ SAY =======
 SAY installer: permanently install ${DISTRO} to HDD/SSD
 SAY live: boot ${DISTRO} using RAM for temporary storage
 SAY run: boot ${DISTRO} using this USB memory device for storage
+SAY commandline: boot ${DISTRO} in commandline mode
 SAY
 DEFAULT installer
 TIMEOUT 50
@@ -132,6 +133,10 @@ LABEL installer
   APPEND boot=UUID=${UUID_SYSTEM} installer quiet systemd.debug_shell systemd.unit=installer.target vga=current
 
 LABEL live
+  KERNEL /${KERNEL_NAME}
+  APPEND boot=UUID=${UUID_SYSTEM} live quiet vga=current
+
+LABEL commandline
   KERNEL /${KERNEL_NAME}
   APPEND boot=UUID=${UUID_SYSTEM} live quiet vga=current textmode retroarch=0
 
@@ -166,12 +171,17 @@ SAY Options
 SAY =======
 SAY live: boot ${DISTRO} using this USB memory device for storage
 SAY installer: permanently install ${DISTRO} to HDD/SSD
+SAY commandline: boot ${DISTRO} into the commandline interface
 SAY
 DEFAULT live
 TIMEOUT 50
 PROMPT 1
 
 LABEL live
+  KERNEL /${KERNEL_NAME}
+  APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} tty portable quiet
+
+LABEL commandline
   KERNEL /${KERNEL_NAME}
   APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} tty portable quiet textmode retroarch=0
 
